@@ -1,31 +1,32 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { useState } from "react"
-import Footer from "./Footer"
-import Header from "./header"
-import Login from "./Login"
-import Home from "./Home"
-import About from "./About"
-import Car from "./Car"
+import Footer from "./Header/Footer"
+import Header from "./Header/Header"
+import Login from "./Auth/Login"
+import Home from "./Navigate/Home"
+import About from "./Navigate/About"
+import Car from "./Navigate/Car"
+import Register from "./Auth/Register"
 
-function App() {
+function App() { 
 
   const [isLoggedIn, setIsLogIn] = useState(false);
-
-  if(!isLoggedIn){
-    return <Login setIsLogIn={setIsLogIn} />
-  }
+  const [showLogin, setShowLogin] = useState(false);
 
   return(
    <>
-        <Header setIsLogIn={setIsLogIn} />
+    <Header isLoggedIn={isLoggedIn} setIsLogIn={setIsLogIn}/>
     <Routes>
      <Route path="/" element={<Home />} />
      <Route path="/about" element={<About />} />
-     <Route path="/car" element={<Car />} />
+     <Route path="/car" element={ isLoggedIn ? <Car/> : <Navigate to="/login"/>} />
+     <Route path="/login" element={<Login setIsLogIn={setIsLogIn}/>}/>
+     <Route path="/register" element={<Register />}/>
     </Routes>
 
     <Footer />
-   </>
+    </>
+   
   )
 }
 
