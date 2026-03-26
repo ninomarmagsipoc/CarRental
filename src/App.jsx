@@ -7,6 +7,8 @@ import Home from "./Navigate/Home"
 import About from "./Navigate/About"
 import Car from "./Navigate/Car"
 import Register from "./Auth/Register"
+import Verify from "./Auth/verify"
+import ForgotPass from "./Auth/ForgotPass"
 
 function App() { 
 
@@ -22,6 +24,8 @@ function App() {
      <Route path="/car" element={ isLoggedIn ? <Car/> : <Navigate to="/login"/>} />
      <Route path="/login" element={<Login setIsLogIn={setIsLogIn}/>}/>
      <Route path="/register" element={<Register />}/>
+     <Route path="/verify" element={<Verify />}></Route>
+     <Route path="/forgot" element={<ForgotPass />}></Route>
     </Routes>
 
     <Footer />
