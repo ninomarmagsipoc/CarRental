@@ -10,8 +10,83 @@
     background-repeat: no-repeat;
     width: 100%;
 }
-.body2{
-    height: 600px;
+
+.slider {
+  overflow: hidden;
+  width: 100%;
+  padding: 40px 0;
+  background: #0b0909;
+}
+
+.slider h1 {
+  text-align: center;
+  font-size: 28px;
+  color: #3b82f6;
+  margin-bottom: 30px;
+}
+
+.slider-track {
+  display: flex;
+  width: max-content; /* important para smooth scroll */
+  animation: scroll 30s linear infinite;
+}
+
+.slider-track:hover {
+  animation-play-state: paused; /* pause on hover */
+}
+
+.car-card {
+  min-width: 260px;
+  margin-right: 20px;
+  background: #111827;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  text-align: center;
+}
+
+.car-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.car-card h3 {
+  margin: 10px 0 5px;
+  color: white;
+}
+
+.car-card p {
+  margin: 4px 0;
+  color: #9ca3af;
+}
+
+.car-card p:last-of-type {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+/* button style */
+.car-card button {
+  margin: 12px;
+  padding: 10px;
+  width: calc(100% - 24px);
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.car-card button:hover {
+  transform: scale(1.05);
+}
+
+/* infinite scroll animation */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .container{

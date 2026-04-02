@@ -37,7 +37,6 @@ function Register() {
                 return;
             }
 
-            // 🔥 IMPORTANT: redirect to verify page
             navigate("/verify", { state: { email: email } });
 
         } catch (err) {

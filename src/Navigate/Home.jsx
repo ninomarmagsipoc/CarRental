@@ -1,16 +1,25 @@
 import { useNavigate } from 'react-router-dom';
 import '../Css/home.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 function Home() {
 
-    const [search, setSearch] = useState("");
+    const [cars, setCars] = useState([]);
     const navigate = useNavigate();
 
-    const handleSearch = (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        fetchCars();
+    }, []);
 
-        // example: redirect to cars page with search query
-        navigate(`/car?search=${search}`);
+    const fetchCars = async () => {
+        try {
+            const res = await fetch("https://localhost:7263/api/cars");
+            const data = await res.json();
+
+            setCars((data.data || data.Data).slice(0, 6));
+        }
+        catch (err) {
+            console.error(err);
+        }
     }
 
     return (
@@ -24,8 +33,23 @@ function Home() {
                     </button>
                 </div>
             </div>
-            <div className="body2">
+            <div className="slider">
+                <h1>Features Cars</h1>
+                <div className="slider-track">
+                    {cars.concat(cars).map((car, index) => ( // duplicate for smooth loop
+                        <div key={index} className="car-card">
+                            <img src={car.CarImage || car.carImage} alt={car.CarName || car.carName} className="car-img" />
+                            <h3>{car.CarName || car.carName}</h3>
+                            <p>{car.CarInfo || car.carInfo}</p>
+                            <p>Seats: {car.Seats || car.seats}</p>
+                            <p>${car.PricePerDay || car.pricePerDay}</p>
 
+                            <button onClick={() => navigate("/car")}>
+                                View More
+                            </button>
+                        </div>
+                    ))}
+                </div>
             </div>
         </>
     )

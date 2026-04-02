@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom"
 import { useState } from "react"
 import Footer from "./Header/Footer"
 import Header from "./Header/Header"
@@ -9,28 +9,40 @@ import Car from "./Navigate/Car"
 import Register from "./Auth/Register"
 import Verify from "./Auth/verify"
 import ForgotPass from "./Auth/ForgotPass"
+import AdminDashboard from "./admin/adminDashboard"
 
-function App() { 
+function AppWrapper() {
+  return (
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+}
+
+function App() {
 
   const [isLoggedIn, setIsLogIn] = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
+  const location = useLocation();
 
-  return(
-   <>
-    <Header isLoggedIn={isLoggedIn} setIsLogIn={setIsLogIn}/>
-    <Routes>
-     <Route path="/" element={<Home />} />
-     <Route path="/about" element={<About />} />
-     <Route path="/car" element={ isLoggedIn ? <Car/> : <Navigate to="/login"/>} />
-     <Route path="/login" element={<Login setIsLogIn={setIsLogIn}/>}/>
-     <Route path="/register" element={<Register />}/>
-     <Route path="/verify" element={<Verify />}></Route>
-     <Route path="/forgot" element={<ForgotPass />}></Route>
-    </Routes>
+  const hideHeader = location.pathname.startsWith("/admin");
 
-    <Footer />
+  return (
+    <>
+      {!hideHeader && <Header isLoggedIn={isLoggedIn} setIsLogIn={setIsLogIn} />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/car" element={isLoggedIn ? <Car /> : <Navigate to="/login" />} />
+        <Route path="/login" element={<Login setIsLogIn={setIsLogIn} />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify" element={<Verify />}></Route>
+        <Route path="/forgot" element={<ForgotPass />}></Route>
+        <Route path="/admin" element={<AdminDashboard />}></Route>
+      </Routes>
+
+      {!hideHeader &&<Footer />}
     </>
-   
+
   )
 }
 

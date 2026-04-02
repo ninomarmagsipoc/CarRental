@@ -39,6 +39,7 @@ function Verify() {
 
   // Verify OTP
   const handleVerify = async () => {
+
     if (!otp) {
       setError("Please enter OTP.");
       return;
@@ -132,7 +133,7 @@ function Verify() {
             type="button"
             className="login-btn"
             onClick={handleVerify}
-            disabled={loading || !otp}
+            disabled={loading}
           >
             {loading ? "Verifying..." : "Verify"}
           </button>

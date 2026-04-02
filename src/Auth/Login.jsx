@@ -7,9 +7,11 @@ function Login({ setIsLogIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(""); // show resend OTP option
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [notVerified, setNotVerified] = useState(false);
 
+  // Handle login
   const handleLogin = async () => {
     if (!email || !password) {
       setError("Please fill all fields.");
@@ -19,43 +21,83 @@ function Login({ setIsLogIn }) {
     setLoading(true);
     setError("");
     setSuccess("");
+    setNotVerified(false);
 
     try {
       const response = await fetch("https://localhost:7263/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
-
       if (!response.ok) {
-          if (response.status === 401) {
-            setError("Wrong password.");
+        // Handle errors
+        const msg = data.message?.toLowerCase() || "";
+        if (msg.includes("verify")) {
+          setError("Your account is not verified.");
+          setNotVerified(true);
+        } else if (response.status === 401) {
+          setError("Wrong password.");
         } else if (response.status === 404) {
           setError("User not found.");
         } else {
           setError(data.message || "Login failed.");
         }
+        return;
+      }
+
+      // ✅ Success
+      const user = data.Data || data.data;
+      const isVerified = user?.IsVerified || user?.isVerified;
+      const role = user?.Role || user?.role;
+
+      if (!isVerified) {
+        setError("Your account is not verified.");
+        setNotVerified(true);
+        return;
+      }
+
+      // Optional: handle admin redirect
+      if (role === "Admin") {
+        setIsLogIn(true);
+        navigate("/admin", { replace: true });
       } else {
-        // Check if the user is verified
-        const user = data.Data || data.data;
+        setIsLogIn(true);
+        navigate("/", { replace: true });
+      }
 
-        const isVerified = user?.isVerified === true || user?.IsVerified === "true";
-
-        if(isVerified){
-          setIsLogIn(true);
-          navigate("/", {replace: true});
-        } else {
-            setError(data.message);
-          }
-         
-        }
-        
-      
     } catch (err) {
       console.error("Error logging in:", err);
       setError("Cannot connect to server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Resend OTP if not verified
+  const handleResendOtp = async () => {
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await fetch(`https://localhost:7263/api/auth/send-otp?email=${email}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setSuccess("OTP sent! Check your email.");
+        setTimeout(() => navigate("/verify", { state: { email } }), 1000);
+      } else {
+        setError(data.message || "Failed to resend OTP");
+      }
+
+    } catch (err) {
+      console.error(err);
+      setError("Error sending OTP.");
     } finally {
       setLoading(false);
     }
@@ -85,7 +127,6 @@ function Login({ setIsLogIn }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-
             <input
               type="password"
               placeholder="Password"
@@ -93,7 +134,6 @@ function Login({ setIsLogIn }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-
             <button className="login-btn" type="submit" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -102,6 +142,17 @@ function Login({ setIsLogIn }) {
           <button className="login-btn" disabled={loading}>
             {loading ? "Forgot" : <Link to="/forgot">Forgot Password</Link>}
           </button>
+
+          {/* Resend OTP if not verified */}
+          {notVerified && (
+            <button
+              onClick={handleResendOtp}
+              className="login-btn"
+              disabled={loading}
+            >
+              {loading ? "Sending OTP..." : "Resend OTP"}
+            </button>
+          )}
 
           <p className="login-footer">
             Don't have an account? <Link to="/register">Register</Link>
