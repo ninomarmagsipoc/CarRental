@@ -1,6 +1,10 @@
+// src/admin/adminDashboard.jsx
+import React from "react";
 
-function AdminDashboard(){
-    return
+export default function AdminDashboard() {
+  return (
+    <>
+      <h2 style={{ marginTop: 0, marginBottom: "20px" }}>Dashboard Over View</h2>
+    </>
+  );
 }
-
-export default AdminDashboard;

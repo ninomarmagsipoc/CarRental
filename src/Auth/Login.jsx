@@ -48,6 +48,7 @@ function Login({ setIsLogIn }) {
       }
 
       // ✅ Success
+      // ✅ Success
       const user = data.Data || data.data;
       const isVerified = user?.IsVerified || user?.isVerified;
       const role = user?.Role || user?.role;
@@ -58,12 +59,31 @@ function Login({ setIsLogIn }) {
         return;
       }
 
+      // Save individual fields (keep these if your navbar or other components use them)
+      localStorage.setItem("userId", user.id || user.Id);
+      localStorage.setItem("userEmail", user.email || user.Email);
+      localStorage.setItem("userRole", role);
+
+      // ✅ CRITICAL FIX: Save the entire user object as JSON for the Profile page
+      // We also make sure the ID key is named 'userId' so your FormData in Profile.jsx works perfectly
+      const userToSave = {
+        ...user,
+        userId: user.id || user.Id, // Normalize the ID key
+        name: user.name || user.Name || "", // Ensure name exists
+        profileImage: user.profileImage || user.ProfileImage || null
+      };
+
+      if (role === "Admin") {
+        localStorage.setItem("admin", JSON.stringify(userToSave));
+      } else {
+        localStorage.setItem("user", JSON.stringify(userToSave));
+      }
+      setIsLogIn(true);
+
       // Optional: handle admin redirect
       if (role === "Admin") {
-        setIsLogIn(true);
         navigate("/admin", { replace: true });
       } else {
-        setIsLogIn(true);
         navigate("/", { replace: true });
       }
 

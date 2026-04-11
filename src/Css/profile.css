@@ -1,0 +1,122 @@
+/* Container for the entire profile section */
+.profile-wrapper {
+    max-width: 1000px; /* Optional: limit max width */
+    margin: 50px auto; /* Center on page with some top/bottom margin */
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Page heading */
+.profile-wrapper h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+/* The two-column layout from your sketch */
+.profile-layout {
+    display: flex; /* Use flexbox to align side-by-side */
+    gap: 30px; /* Space between the two columns */
+    align-items: flex-start; /* Align columns to the top */
+}
+
+/* 👈 Left Column Style */
+.profile-sidebar {
+    width: 300px; /* Fixed width for the sidebar */
+    flex-shrink: 0; /* Prevents sidebar from shrinking */
+    background-color: #f9f9f9; /* Light background */
+    border: 1px solid #ddd; /* Match the sketched border */
+    border-radius: 10px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center picture and button horizontally */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Soft shadow */
+}
+
+/* Large Circular Profile Picture */
+.profile-img-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Perfect circle */
+    object-fit: cover; /* Prevents stretching */
+    border: 3px solid #ccc;
+    margin-bottom: 20px;
+}
+
+/* The styled 'Change Profile' button */
+.change-profile-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+    transition: background-color 0.2s;
+}
+
+.change-profile-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* 👉 Right Column Style */
+.profile-main {
+    flex-grow: 1; /* Takes up all remaining space */
+    background-color: #fff;
+    border: 1px solid #ddd; /* Match the sketched border */
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Soft shadow */
+}
+
+/* General form element spacing */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Labels */
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Input fields */
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Crucial: includes padding in total width */
+}
+
+/* Style for the disabled Email input */
+.form-group input:disabled {
+    background-color: #f1f1f1;
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* The 'Save Changes' button */
+.save-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 30px;
+    background-color: #007bff; /* Example blue button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.save-btn:hover {
+    background-color: #0056b3;
+}

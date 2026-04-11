@@ -1,0 +1,82 @@
+.rental-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.rental-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1a1a1a;
+}
+
+.rental-card {
+  display: flex;
+  flex-wrap: wrap;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.rental-image img {
+  width: 100%;
+  max-width: 400px;
+  border-right: 1px solid #ddd;
+  border-radius: 12px 0 0 12px;
+}
+
+.rental-info {
+  flex: 1;
+  padding: 20px;
+}
+
+.car-info {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+.rental-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.rental-dates label {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.rental-dates input {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.rental-total {
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.rental-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.rental-btn:hover {
+  background-color: #0056b3;
+}
+
+.rental-message {
+  margin-top: 15px;
+  font-weight: bold;
+  color: green;
+}

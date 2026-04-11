@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Footer from "./Header/Footer"
 import Header from "./Header/Header"
 import Login from "./Auth/Login"
@@ -10,6 +10,15 @@ import Register from "./Auth/Register"
 import Verify from "./Auth/verify"
 import ForgotPass from "./Auth/ForgotPass"
 import AdminDashboard from "./admin/adminDashboard"
+import Rental from "./Book/booking"
+import Profile from "./dropdown-menu/profile"
+import ManageBooking from "./admin/manageBooking"
+import AdminLayout from "./admin/AdminLayout"
+import ManageCars from "./admin/manageCar"
+import ManageCustomer from "./admin/manageCustomers"
+import ManagePayment from "./admin/managePayment"
+import ReportAnalytics from "./admin/reportAnalytics"
+import RentalHistory from "./admin/rentalHistory"
 
 function AppWrapper() {
   return (
@@ -21,10 +30,18 @@ function AppWrapper() {
 
 function App() {
 
-  const [isLoggedIn, setIsLogIn] = useState(false);
+  const [isLoggedIn, setIsLogIn] = useState(!!localStorage.getItem("user") || !!localStorage.getItem("admin"));
   const location = useLocation();
 
   const hideHeader = location.pathname.startsWith("/admin");
+
+  useEffect (() =>{
+    if (!location.pathname.startsWith("/admin") && localStorage.getItem("admin")) {
+      localStorage.removeItem("admin");
+
+      setIsLogIn(!!localStorage.getItem("user"));
+    }
+  },[location.pathname]);
 
   return (
     <>
@@ -32,12 +49,26 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/car" element={isLoggedIn ? <Car /> : <Navigate to="/login" />} />
+        <Route path="/car" element={<Car isLoggedIn={isLoggedIn} />} />
         <Route path="/login" element={<Login setIsLogIn={setIsLogIn} />} />
+        <Route path="/booking/:carName" element={<Rental isLoggedIn={isLoggedIn}/>}></Route>
         <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<Verify />}></Route>
         <Route path="/forgot" element={<ForgotPass />}></Route>
-        <Route path="/admin" element={<AdminDashboard />}></Route>
+        <Route path="/profile" element={<Profile />}></Route>
+
+
+        <Route path="/admin" element={<AdminLayout setIsLogIn={setIsLogIn} />}>
+          <Route index element={<AdminDashboard />}/>
+          <Route path="manage-booking" element={<ManageBooking/>}/>
+          <Route path="manage-car" element={<ManageCars/>}/>
+          <Route path="customers" element={<ManageCustomer/>}/>
+          <Route path="manage-payment" element={<ManagePayment/>}/>
+          <Route path="report-analytics" element={<ReportAnalytics/>}/>
+          <Route path="rental-history" element={<RentalHistory/>}/>
+          
+
+        </Route>
       </Routes>
 
       {!hideHeader &&<Footer />}
