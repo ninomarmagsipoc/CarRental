@@ -1,82 +1,227 @@
+/* --- Base Page Layout --- */
 .rental-page {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: 'Arial', sans-serif;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
 .rental-title {
   text-align: center;
-  margin-bottom: 30px;
-  color: #1a1a1a;
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: #2c3e50;
 }
 
+/* --- Card Layout (Flexbox for Desktop/Mobile) --- */
 .rental-card {
   display: flex;
-  flex-wrap: wrap;
-  background: #f9f9f9;
+  flex-direction: row;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  border: 1px solid #eaeaea;
+}
+
+/* --- LEFT SIDE: Image & Car Details --- */
+.rental-left {
+  flex: 1;
+  max-width: 50%;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+  border-right: 1px solid #eaeaea;
+}
+
+.rental-image {
+  width: 100%;
 }
 
 .rental-image img {
   width: 100%;
-  max-width: 400px;
-  border-right: 1px solid #ddd;
-  border-radius: 12px 0 0 12px;
+  height: 350px; /* Adjust this height if needed so the image doesn't stretch too far */
+  object-fit: cover;
+  display: block;
 }
 
-.rental-info {
-  flex: 1;
-  padding: 20px;
+.car-details {
+  padding: 25px 30px;
 }
 
-.car-info {
+.car-details p {
+  font-size: 1.1rem;
   margin-bottom: 10px;
-  font-size: 16px;
-  color: #555;
+  color: #333;
 }
 
-.rental-dates {
+.car-desc {
+  font-size: 1rem !important;
+  color: #666 !important;
+  margin-bottom: 20px !important;
+  line-height: 1.5;
+}
+
+/* --- RIGHT SIDE: Form --- */
+.rental-right {
+  flex: 1;
+  padding: 30px 40px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 15px 0;
+  flex-direction: column;
 }
 
-.rental-dates label {
-  margin-right: 5px;
-  font-weight: bold;
+.rental-form-group {
+  margin-top: 0; /* Removed top margin since info is gone */
 }
 
-.rental-dates input {
-  padding: 6px;
-  border-radius: 6px;
+label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4a4a4a;
+  margin-bottom: -5px;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 1rem;
   border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
 }
 
+input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+input:disabled {
+  color: #6c757d;
+}
+
+/* --- Total Price Display --- */
 .rental-total {
-  margin-bottom: 15px;
-  font-weight: bold;
+  margin-top: 25px;
+  padding: 15px;
+  background-color: #eafaf1;
+  border-left: 5px solid #2ecc71;
+  border-radius: 6px;
 }
 
+.rental-total p {
+  margin: 5px 0;
+  color: #27ae60;
+  font-size: 1.1rem;
+}
+
+.rental-total p:last-child {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* --- Buttons & Messages --- */
 .rental-btn {
-  background-color: #007bff;
+  margin-top: 30px;
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
   color: white;
+  background-color: #2ecc71;
   border: none;
-  padding: 10px 16px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
-.rental-btn:hover {
-  background-color: #0056b3;
+.rental-btn:hover:not(:disabled) {
+  background-color: #27ae60;
+}
+
+.rental-btn:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+.rental-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  opacity: 0.8;
 }
 
 .rental-message {
   margin-top: 15px;
-  font-weight: bold;
-  color: green;
+  text-align: center;
+  font-weight: 600;
+  color: #e74c3c;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #fdf2f0;
+}
+
+/* =========================================
+   📱 RESPONSIVE DESIGN (MOBILE & TABLET)
+   ========================================= */
+
+/* For tablets and smaller screens */
+@media (max-width: 900px) {
+  .rental-card {
+    flex-direction: column; 
+  }
+
+  .rental-left {
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eaeaea;
+  }
+
+
+  .rental-image {
+    max-width: 100%;
+    height: 300px; /* Fixed height for image on mobile */
+  }
+
+  .rental-info {
+    padding: 25px 20px;
+  }
+}
+
+/* For smaller mobile phones */
+@media (max-width: 480px) {
+  .rental-page {
+    padding: 20px 15px;
+  }
+
+  .rental-title {
+    font-size: 1.8rem;
+  }
+
+  .rental-image {
+    height: 250px;
+  }
+
+  .rental-btn {
+    padding: 12px;
+    font-size: 1rem;
+  }
+}
+
+/* --- Validation Errors --- */
+.error-text {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: -8px; /* Pulls it closer to the input above it */
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.input-error {
+  border-color: #e74c3c !important;
+  background-color: #fdf2f0;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
 }

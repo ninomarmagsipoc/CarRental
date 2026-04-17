@@ -19,6 +19,9 @@ import ManageCustomer from "./admin/manageCustomers"
 import ManagePayment from "./admin/managePayment"
 import ReportAnalytics from "./admin/reportAnalytics"
 import RentalHistory from "./admin/rentalHistory"
+import Notification from "./dropdown-menu/notification"
+import Favorite from "./dropdown-menu/favorites"
+import MyRentalHistory from "./dropdown-menu/rent-history"
 
 function AppWrapper() {
   return (
@@ -56,6 +59,9 @@ function App() {
         <Route path="/verify" element={<Verify />}></Route>
         <Route path="/forgot" element={<ForgotPass />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/notifications" element={<Notification />}></Route>
+        <Route path="/favorites" element={<Favorite isLoggedIn={isLoggedIn}/>}></Route>
+        <Route path="/my-rentals" element={<MyRentalHistory />} />
 
 
         <Route path="/admin" element={<AdminLayout setIsLogIn={setIsLogIn} />}>

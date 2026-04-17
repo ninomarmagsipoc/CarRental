@@ -1,23 +1,56 @@
 import { useNavigate } from 'react-router-dom';
-import '../Css/home.css'
+import '../Css/home.css';
+import ninoImage from '../assets/ninoMar.jpg';
+import lawrence from '../assets/lawrence.jpg';
+import jacob from '../assets/jacob.jpg';
+import kyla from '../assets/kyla.jpg';
 import { useEffect, useState } from 'react';
-function Home() {
 
+function Home() {
     const [cars, setCars] = useState([]);
+    const [paymentMessage, setPaymentMessage] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchCars();
     }, []);
 
+    useEffect(() => {
+        const verifyReturningPayment = async () => {
+            const ref = localStorage.getItem("payMongoRef");
+            if (!ref) return;
+
+            try {
+                setPaymentMessage("Verifying your payment... Please wait.");
+                const res = await fetch(`https://localhost:7263/api/payment/verify?payMongoReference=${ref}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                const data = await res.json();
+
+                if (data.statusCode === 200 || data.data === true) {
+                    alert("✅ Payment Successful! Your booking is now Pending Review by the Admin.");
+                } else {
+                    alert("❌ Payment verification failed: " + data.message);
+                }
+            } catch (error) {
+                console.error("Error verifying payment:", error);
+                alert("Network error while verifying your payment.");
+            } finally {
+                localStorage.removeItem("payMongoRef");
+                setPaymentMessage("");
+            }
+        };
+
+        verifyReturningPayment();
+    }, []);
+
     const fetchCars = async () => {
         try {
             const res = await fetch("https://localhost:7263/api/cars");
             const data = await res.json();
-
             setCars((data.data || data.Data).slice(0, 6));
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
         }
     }
@@ -33,55 +66,146 @@ function Home() {
                     </button>
                 </div>
             </div>
-           <div className="slider-container">
-    <div className="slider-header">
-        <h2>Featured Cars</h2>
-        <p>Discover our most popular rentals</p>
-    </div>
 
-    <div className="slider-viewport">
-        <div className="slider-track">
-            {cars.concat(cars).map((car, index) => (
-                <div key={index} className="car-card">
-                    <div className="car-image-wrapper">
-                        <img 
-                            src={`https://localhost:7263/images/${car.CarImage || car.carImage}`} 
-                            alt={car.CarName || car.carName} 
-                            className="car-img" 
-                            onError={(e) => { e.target.src = '/default-car.png' }} // Fallback if image fails to load
-                        />
-                        <div className="car-badge">Featured</div>
-                    </div>
+            <div className="slider-container">
+                <div className="slider-header">
+                    <h2>Featured Cars</h2>
+                    <p>Discover our most popular rentals</p>
+                </div>
 
-                    <div className="car-content">
-                        <div className="car-title-row">
-                            <h3>{car.CarName || car.carName}</h3>
-                        </div>
-                        
-                        <p className="car-info">{car.CarInfo || car.carInfo}</p>
-                        
-                        <div className="car-meta">
-                            <span>💺 {car.Seats || car.seats} Seats</span>
-                            <span>⚙️ Auto</span> {/* Add transmission or other static details if you have them */}
-                        </div>
-
-                        <div className="car-footer">
-                            <div className="car-price">
-                                <span className="price-amount">${car.PricePerDay || car.pricePerDay}</span>
-                                <span className="price-period">/ day</span>
+                <div className="slider-viewport">
+                    <div className="slider-track">
+                        {cars.concat(cars).map((car, index) => (
+                            <div key={index} className="car-card">
+                                <div className="car-image-wrapper">
+                                    <img
+                                        src={`https://localhost:7263/images/${car.CarImage || car.carImage}`}
+                                        alt={car.CarName || car.carName}
+                                        className="car-img"
+                                        onError={(e) => { e.target.src = '/default-car.png' }}
+                                    />
+                                    <div className="car-badge">Featured</div>
+                                </div>
+                                <div className="car-content">
+                                    <div className="car-title-row">
+                                        <h3>{car.CarName || car.carName}</h3>
+                                    </div>
+                                    <div className="car-info">{car.CarInfo || car.carInfo}</div>
+                                    <div className="car-meta">
+                                        <span>💺 {car.Seats || car.seats} Seats</span>
+                                        <span>⚙️ Auto</span>
+                                    </div>
+                                    <div className="car-footer">
+                                        <div className="car-price">
+                                            <span className="price-amount">₱{car.PricePerDay || car.pricePerDay}</span>
+                                            <span className="price-period">/ day</span>
+                                        </div>
+                                        <button className="view-more-btn" onClick={() => navigate("/car")}>
+                                            View More
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <button className="view-more-btn" onClick={() => navigate("/car")}>
-                                View More
-                            </button>
-                        </div>
+                        ))}
                     </div>
                 </div>
-            ))}
-        </div>
-    </div>
-</div>
+            </div>
+
+            <section className="creators-section">
+                <div className="creators-header">
+                    <h2>Meet the Developers</h2>
+                    <p>The minds behind the system</p>
+                </div>
+                
+                <div className="creators-grid">
+                    <div className="creator-card">
+                        <div className="creator-image-container">
+                            <img 
+                                src={ninoImage} 
+                                alt="Nino Mar" 
+                                className="creator-profile-pic" />
+                        </div>
+                        <div className="creator-info">
+                            <h3>Magsipoc, Niño Mar U.</h3>
+                            <p>Backend Developer</p>
+                            <a 
+                                href="https://www.facebook.com/shanon.nam.1" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="fb-link-btn"
+                            >
+                                <span className="fb-icon">f</span> Visit Facebook Profile
+                            </a>
+                        </div>
+                    </div>
+                    <div className="creator-card">
+                        <div className="creator-image-container">
+                            <img 
+                                src={lawrence} 
+                                alt="Creator Name" 
+                                className="creator-profile-pic"
+                            />
+                        </div>
+                        <div className="creator-info">
+                            <h3>Maligro, Lawrence R.</h3>
+                            <p>Frontend Developer</p>
+                            <a 
+                                href="https://www.facebook.com/lawrence.maligro.2024" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="fb-link-btn"
+                            >
+                                <span className="fb-icon">f</span> Visit Facebook Profile
+                            </a>
+                        </div>
+                    </div>
+                    <div className="creator-card">
+                        <div className="creator-image-container">
+                            <img 
+                                src={jacob} 
+                                alt="Creator Name" 
+                                className="creator-profile-pic"
+                            />
+                        </div>
+                        <div className="creator-info">
+                            <h3>Bugtong, John Jacob D.</h3>
+                            <p>Mobile Developer</p>
+                            <a 
+                                href="https://www.facebook.com/johnz.desabelle" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="fb-link-btn"
+                            >
+                                <span className="fb-icon">f</span> Visit Facebook Profile
+                            </a>
+                        </div>
+                    </div>
+                    <div className="creator-card">
+                        <div className="creator-image-container">
+                            <img 
+                                src={kyla} 
+                                alt="Creator Name" 
+                                className="creator-profile-pic"
+                            />
+                        </div>
+                        <div className="creator-info">
+                            <h3>Francisco, kyla B.</h3>
+                            <p>Tester & Document Specialist</p>
+                            <a 
+                                href="https://www.facebook.com/lala.franz.77" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="fb-link-btn"
+                            >
+                                <span className="fb-icon">f</span> Visit Facebook Profile
+                            </a>
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
         </>
     )
 }
 
-export default Home
+export default Home;

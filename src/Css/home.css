@@ -282,3 +282,106 @@
   width: 300px;
   text-align: center;
 }
+
+/* Creators Section Styles */
+.creators-section {
+    background-color: #000; /* Black background para premium */
+    color: #fff;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.creators-header h2 {
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
+}
+
+.creators-header p {
+    font-size: 1.1rem;
+    opacity: 0.7;
+    margin-bottom: 50px;
+}
+
+.creators-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.creator-card {
+    background: #111; /* Dark gray for subtle contrast */
+    border: 1px solid #333;
+    padding: 30px;
+    border-radius: 4px;
+    max-width: 350px;
+    width: 100%;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.creator-card:hover {
+    transform: translateY(-10px);
+    border-color: #fff;
+}
+
+.creator-image-container {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #fff;
+}
+
+.creator-profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.creator-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.creator-info p {
+    color: #888;
+    margin-bottom: 25px;
+}
+
+/* Facebook Button Style */
+.fb-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    color: #000;
+    text-decoration: none;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    gap: 10px;
+    transition: 0.3s;
+    width: 100%;
+}
+
+.fb-link-btn:hover {
+    background-color: #ddd;
+    letter-spacing: 1px;
+}
+
+.fb-icon {
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .creators-header h2 {
+        font-size: 1.8rem;
+    }
+}

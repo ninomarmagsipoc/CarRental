@@ -44,7 +44,6 @@ function ForgotReset() {
     }
   };
 
-  // ✅ Reset password
   const handleResetPassword = async () => {
     if (!otp || !newPassword) {
       setMessage("Please fill all fields.");
