@@ -9,18 +9,41 @@ function Register() {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
     const handleRegister = async () => {
-        
-        if (!firstName || !lastName || !email || !password) {
-            setError("All fields are required.");
+
+        let newErrors = {};
+
+        // Required
+        if (!firstName) newErrors.firstName = "First name is required";
+        if (!lastName) newErrors.lastName = "Last name is required";
+        if (!email) newErrors.email = "Email is required";
+        if (!password) newErrors.password = "Password is required";
+        if (!confirmPassword) newErrors.confirmPassword = "Confirm your password";
+
+
+        // Password match
+        if (password !== confirmPassword) {
+            newErrors.confirmPassword = "Passwords do not match";
+        }
+
+        // Strong password
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+        if (password && !passwordRegex.test(password)) {
+            newErrors.password = "Must include uppercase, lowercase, number, symbol";
+        }
+
+        // If adunay errors, stop
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
             return;
         }
 
+        setErrors({});
         setLoading(true);
-        setError("");
 
         try {
             const response = await fetch("https://localhost:7263/api/auth/register", {
@@ -32,7 +55,7 @@ function Register() {
             const data = await response.json();
 
             if (!response.ok) {
-                setError(data.message || "Registration failed.");
+                setErrors({ general: data.message || "Registration failed" });
                 setLoading(false);
                 return;
             }
@@ -40,7 +63,7 @@ function Register() {
             navigate("/verify", { state: { email: email } });
 
         } catch (err) {
-            setError("Error connecting to server.");
+            setErrors({ general: "Server error" });
             console.error(err);
         } finally {
             setLoading(false);
@@ -53,9 +76,9 @@ function Register() {
                 <div className="login-card">
                     <h1 className="logo-text">JKLM</h1>
                     <span className="logo-sub">Car Rental</span>
-                    <p className="login-sub">Register to get started</p>
+                    <p className="login-sub">Register to continue</p>
 
-                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    {errors.general && <p style={{ color: "red" }}>{errors.general}</p>}
 
                     <input
                         type="text"
@@ -63,7 +86,9 @@ function Register() {
                         className="login-input"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
+                        maxLength={50}
                     />
+                    {errors.firstName && <p style={{ color: "red" }}>{errors.firstName}</p>}
 
                     <input
                         type="text"
@@ -71,7 +96,9 @@ function Register() {
                         className="login-input"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
+                        maxLength={50}
                     />
+                    {errors.lastName && <p style={{ color: "red" }}>{errors.lastName}</p>}
 
                     <input
                         type="email"
@@ -79,7 +106,9 @@ function Register() {
                         className="login-input"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        maxLength={50}
                     />
+                    {errors.email && <p style={{ color: "red" }}>{errors.email}</p>}
 
                     <input
                         type="password"
@@ -88,16 +117,23 @@ function Register() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                    {errors.password && <p style={{ color: "red" }}>{errors.password}</p>}
+
+                    <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        className="login-input"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    {errors.confirmPassword && <p style={{ color: "red" }}>{errors.confirmPassword}</p>}
 
                     <button className="login-btn" onClick={handleRegister} disabled={loading}>
                         {loading ? "Registering..." : "Register"}
                     </button>
 
                     <p className="login-footer">
-                        Already have an account?{" "}
-                        <span className="link">
-                            <Link to="/login">Login</Link>
-                        </span>
+                        Already have an account? <Link to="/login">Login</Link>
                     </p>
                 </div>
             </div>

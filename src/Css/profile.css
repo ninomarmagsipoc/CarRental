@@ -1,122 +1,388 @@
-/* Container for the entire profile section */
-.profile-wrapper {
-    max-width: 1000px; /* Optional: limit max width */
-    margin: 50px auto; /* Center on page with some top/bottom margin */
-    padding: 20px;
-    font-family: Arial, sans-serif;
+/* Base Wrapper */
+.settings-page-wrapper {
+    background-color: #121212;
+    min-height: 100vh;
+    padding: 40px 20px;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    color: #e4e6eb;
+    display: flex;
+    justify-content: center;
 }
 
-/* Page heading */
-.profile-wrapper h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-weight: bold;
-}
-
-/* The two-column layout from your sketch */
-.profile-layout {
-    display: flex; /* Use flexbox to align side-by-side */
-    gap: 30px; /* Space between the two columns */
-    align-items: flex-start; /* Align columns to the top */
-}
-
-/* 👈 Left Column Style */
-.profile-sidebar {
-    width: 300px; /* Fixed width for the sidebar */
-    flex-shrink: 0; /* Prevents sidebar from shrinking */
-    background-color: #f9f9f9; /* Light background */
-    border: 1px solid #ddd; /* Match the sketched border */
-    border-radius: 10px;
-    padding: 30px;
+/* Main Container Card */
+.settings-container {
+    background-color: #1e1e1e;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center picture and button horizontally */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Soft shadow */
 }
 
-/* Large Circular Profile Picture */
-.profile-img-large {
+/* Header */
+.settings-header {
+    padding: 30px 40px 20px;
+    border-bottom: 1px solid #333;
+}
+
+.settings-header h1 {
+    margin: 0 0 5px 0;
+    font-size: 24px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.settings-header p {
+    margin: 0;
+    font-size: 14px;
+    color: #b0b3b8;
+}
+
+/* Content Area (Sidebar + Form) */
+.settings-content {
+    display: flex;
+    padding: 30px 40px;
+    gap: 40px;
+}
+
+/* Sidebar / Avatar Area */
+.settings-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.settings-avatar-wrapper {
     width: 150px;
     height: 150px;
-    border-radius: 50%; /* Perfect circle */
-    object-fit: cover; /* Prevents stretching */
-    border: 3px solid #ccc;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #2a2a2a;
+    border: 2px solid #333;
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* The styled 'Change Profile' button */
-.change-profile-btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
+.settings-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.settings-avatar-placeholder {
+    font-size: 48px;
+    font-weight: bold;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.settings-upload-btn {
+    background-color: #3a3b3c;
+    color: #ffffff;
+    padding: 10px 16px;
+    border-radius: 6px;
     font-size: 14px;
-    font-weight: bold;
-    color: #555;
-    transition: background-color 0.2s;
-}
-
-.change-profile-btn:hover {
-    background-color: #e0e0e0;
-}
-
-/* 👉 Right Column Style */
-.profile-main {
-    flex-grow: 1; /* Takes up all remaining space */
-    background-color: #fff;
-    border: 1px solid #ddd; /* Match the sketched border */
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Soft shadow */
-}
-
-/* General form element spacing */
-.form-group {
-    margin-bottom: 20px;
-}
-
-/* Labels */
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-}
-
-/* Input fields */
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box; /* Crucial: includes padding in total width */
-}
-
-/* Style for the disabled Email input */
-.form-group input:disabled {
-    background-color: #f1f1f1;
-    color: #888;
-    cursor: not-allowed;
-}
-
-/* The 'Save Changes' button */
-.save-btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin-top: 30px;
-    background-color: #007bff; /* Example blue button */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
+    text-align: center;
+    width: 100%;
+    border: 1px solid #444;
 }
 
-.save-btn:hover {
-    background-color: #0056b3;
+.settings-upload-btn:hover {
+    background-color: #4e4f50;
+}
+
+/* Form Area */
+.settings-form {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 15px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+/* View/Display Rows (When form is hidden) */
+.info-display-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: #242526;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.info-text label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #b0b3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.info-text p {
+    margin: 0;
+    font-size: 16px;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Edit / Toggle Buttons */
+.btn-edit-toggle {
+    background-color: transparent;
+    border: 1px solid #444;
+    color: #e4e6eb;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-edit-toggle:hover {
+    background-color: #3a3b3c;
+    border-color: #555;
+}
+
+/* Active Edit Box (When form is shown) */
+.edit-box {
+    background-color: #1a1a1a;
+    border: 1px solid #3b82f6; /* Highlight border to show it's active */
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.edit-box-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    border: none;
+    color: #b0b3b8;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 12px;
+}
+
+.btn-cancel:hover {
+    color: #ff6b6b;
+    text-decoration: underline;
+}
+
+/* Inputs & Form layout */
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b0b3b8;
+    margin-bottom: 8px;
+}
+
+.settings-input {
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.settings-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.settings-input::placeholder {
+    color: #65676b;
+}
+
+.input-disabled {
+    background-color: #1a1a1a;
+    color: #777;
+    cursor: not-allowed;
+    border-color: #333;
+}
+
+.settings-error {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+/* Actions Panel (Bottom OTP & Save) */
+.settings-actions {
+    padding: 25px 40px;
+    background-color: #1a1a1a;
+    border-top: 1px solid #3b82f6; /* Blue highlight to grab attention */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.settings-otp-box {
+    width: 100%;
+    background-color: #242526;
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.settings-otp-box p {
+    width: 100%;
+    margin: 0 0 15px 0;
+    color: #b0b3b8;
+    font-size: 14px;
+}
+
+.verify-box label {
+    width: 100%;
+    margin-bottom: 10px;
+    color: #e4e6eb;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.otp-input-group {
+    display: flex;
+    width: 100%;
+    gap: 15px;
+}
+
+.otp-input-group .settings-input {
+    flex-grow: 1;
+}
+
+/* Global Buttons */
+.settings-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-success {
+    background-color: #10b981;
+    color: white;
+    white-space: nowrap;
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+/* Alerts */
+.settings-alert {
+    margin: 20px 40px 0;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.alert-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #ffb3b3;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.alert-success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #a7f3d0;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.settings-loading {
+    text-align: center;
+    padding: 50px;
+    color: #b0b3b8;
+    font-size: 18px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .settings-content {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .settings-sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .otp-input-group {
+        flex-direction: column;
+    }
+
+    .settings-btn {
+        width: 100%;
+    }
 }

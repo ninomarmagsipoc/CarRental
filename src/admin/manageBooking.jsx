@@ -6,8 +6,130 @@ function ManageBooking() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState("All");
+
+    // --- PAGINATION STATES ---
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // 5 items per page
 
     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+
+    // --- MODAL STATES ---
+    const [showModal, setShowModal] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState(null);
+    const [toast, setToast] = useState({
+        show: false,
+        message: "",
+        type: "success" // success | error | warning
+    });
+
+    const [confirmModal, setConfirmModal] = useState({
+        show: false,
+        message: "",
+        onConfirm: null
+    });
+
+    const showConfirm = (message, onConfirm) => {
+        setConfirmModal({
+            show: true,
+            message,
+            onConfirm
+        });
+    };
+
+    const [inputModal, setInputModal] = useState({
+        show: false,
+        title: "",
+        placeholder: "",
+        value: "",
+        onSubmit: null
+    });
+
+    const showInputModal = (title, placeholder, onSubmit) => {
+        setInputModal({
+            show: true,
+            title,
+            placeholder,
+            value: "",
+            onSubmit
+        });
+    };
+
+    const handleInputChange = (e) => {
+        setInputModal(prev => ({
+            ...prev,
+            value: e.target.value
+        }));
+    };
+
+    const handleInputSubmit = () => {
+        if (inputModal.value.trim() === "") {
+            showToast("Input is required", "warning");
+            return;
+        }
+
+        if (inputModal.onSubmit) {
+            inputModal.onSubmit(inputModal.value);
+        }
+
+        setInputModal({ show: false, title: "", placeholder: "", value: "", onSubmit: null });
+    };
+
+    const closeInputModal = () => {
+        setInputModal({ show: false, title: "", placeholder: "", value: "", onSubmit: null });
+    };
+
+    const handleConfirmYes = () => {
+        if (confirmModal.onConfirm) {
+            confirmModal.onConfirm();
+        }
+        setConfirmModal({ show: false, message: "", onConfirm: null });
+    };
+
+    const handleConfirmNo = () => {
+        setConfirmModal({ show: false, message: "", onConfirm: null });
+    };
+
+    const showToast = (message, type = "success") => {
+        setToast({ show: true, message, type });
+
+        setTimeout(() => {
+            setToast({ show: false, message: "", type: "success" });
+        }, 3000); // mawala after 3 seconds
+    };
+
+    const handleViewDetails = (booking) => {
+        setSelectedBooking(booking);
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setSelectedBooking(null);
+    };
+
+    // --- MODAL STYLES ---
+    const overlayStyle = {
+        position: 'fixed',
+        top: 0, left: 0, right: 0, bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000
+    };
+
+    const modalStyle = {
+        backgroundColor: '#fff',
+        padding: '20px',
+        borderRadius: '8px',
+        width: '90%',
+        maxWidth: '500px',
+        color: '#000',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        maxHeight: '90vh',
+        overflowY: 'auto'
+    };
 
     useEffect(() => {
         fetchBookings();
@@ -30,179 +152,237 @@ function ManageBooking() {
         }
     };
 
-    const handleReview = async (rentalId, action, paymentId) => {
+    const handleReview = (rentalId, action, paymentId) => {
         const newStatus = action === "Rejected" ? "Refund Required" : "Approved";
 
-        if (!window.confirm(`Are you sure you want to mark this booking as ${newStatus}?`)) return;
+        showConfirm(`Are you sure you want to mark this booking as ${newStatus}?`, async () => {
 
-        let reasonText = "Admin rejected booking";
-        if (action === "Rejected") {
-            const userInput = window.prompt("Please enter a reason for rejecting and refunding this booking:", "Car is currently under maintenance");
+            const processReview = async (reasonText) => {
+                try {
+                    const response = await fetch(`https://localhost:7263/api/rental/admin/rentals/${rentalId}/review`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            newStatus,
+                            reason: reasonText
+                        })
+                    });
 
-            if (userInput === null) return;
-            reasonText = userInput;
-        }
+                    if (response.ok) {
 
-        try {
-            const response = await fetch(`https://localhost:7263/api/rental/admin/rentals/${rentalId}/review`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    newStatus: newStatus,
-                    reason: reasonText
-                })
-            });
-
-            if (response.ok) {
-                if (action === "Rejected") {
-                    if (!paymentId) {
-                        alert("Booking rejected, but no Payment ID was found to process the refund.");
-                    } else {
-                        try {
-                            const refundResponse = await fetch(`https://localhost:7263/api/payment/refund/${paymentId}`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ reason: reasonText })
-                            });
-
-                            const refundData = await refundResponse.json();
-
-                            if (!refundResponse.ok) {
-                                alert(`Status updated, but the automatic refund failed: ${refundData.message || refundData.title || 'Unknown error'}`);
+                        if (action === "Rejected") {
+                            if (!paymentId) {
+                                showToast("Booking rejected, but no Payment ID was found for refund.", "warning");
                             } else {
-                                alert("Booking rejected and refund processed successfully!");
-                            }
-                        } catch (refundErr) {
-                            console.error("Error processing refund:", refundErr);
-                            alert("Status updated, but a network error occurred while processing the refund.");
-                        }
-                    }
-                }
+                                try {
+                                    const refundResponse = await fetch(
+                                        `https://localhost:7263/api/payment/refund/${paymentId}`,
+                                        {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({ reason: reasonText })
+                                        }
+                                    );
 
-                setBookings(prevBookings =>
-                    prevBookings.map(b =>
-                        (b.rentalID === rentalId || b.rentalId === rentalId) ? { ...b, status: newStatus } : b
-                    )
+                                    const refundData = await refundResponse.json();
+
+                                    if (!refundResponse.ok) {
+                                        showToast(
+                                            `Refund failed: ${refundData.message || 'Unknown error'}`,
+                                            "error"
+                                        );
+                                    } else {
+                                        showToast("Booking rejected and refund processed successfully!", "success");
+                                    }
+
+                                } catch (refundErr) {
+                                    console.error("Refund error:", refundErr);
+                                    showToast("Network error while processing refund.", "error");
+                                }
+                            }
+                        } else {
+                            showToast("Booking approved successfully!", "success");
+                        }
+
+                        setBookings(prev =>
+                            prev.map(b =>
+                                (b.rentalID === rentalId || b.rentalId === rentalId)
+                                    ? { ...b, status: newStatus }
+                                    : b
+                            )
+                        );
+
+                    } else {
+                        showToast("Failed to update booking status.", "error");
+                    }
+
+                } catch (err) {
+                    console.error("Error updating booking:", err);
+                    showToast("Network error occurred.", "error");
+                }
+            };
+
+            // ✅ REPLACE PROMPT WITH INPUT MODAL
+            if (action === "Rejected") {
+                showInputModal(
+                    "Reject Booking Reason",
+                    "Enter reason for rejection...",
+                    (reasonText) => {
+                        if (!reasonText || reasonText.trim() === "") {
+                            showToast("Reason is required", "warning");
+                            return;
+                        }
+
+                        processReview(reasonText);
+                    }
                 );
             } else {
-                alert("Failed to update booking status. Please check the console.");
+                processReview("Admin approved booking");
             }
-        } catch (err) {
-            console.error("Error updating booking:", err);
-        }
+
+        });
     };
 
     const stats = useMemo(() => {
         let pending = 0;
         let approved = 0;
-        let confirmed = 0;
-        let delivered = 0;
+        let rented = 0;
 
         bookings.forEach(b => {
             if (b.status === 'Pending Review') pending++;
-            if (b.status === 'Approced') approved++;
-            if (b.status === 'Confirmed') confirmed++;
-            if(b.status === 'Delivered') delivered++;
+            if (b.status === 'Approved') approved++;
+            if (b.status === 'Rented') rented++;
         });
 
-        return { total: bookings.length, pending, approved, confirmed, delivered };
+        return { total: bookings.length, pending, approved, rented };
     }, [bookings]);
 
-    const filteredBookings = bookings.filter(b => {
-        const searchLower = searchTerm.toLowerCase();
-        const customer = (b.userName || "").toLowerCase();
-        const rentalId = (b.rentalID || b.rentalId || "").toString();
-        const carId = (b.carID || b.carId || "").toString();
+    const filteredBookings = useMemo(() => {
+        return bookings.filter((b) => {
+            const customer = (b.fullName || b.customerName || "").toLowerCase();
+            const rentalId = (b.rentalID || b.rentalId || "").toString();
+            const carId = (b.carID || b.carId || "").toString();
+            const status = b.status || b.Status || ""; // Kuhaon ang status sa booking
+            const searchLower = searchTerm.toLowerCase();
 
-        return customer.includes(searchLower) ||
-            rentalId.includes(searchLower) ||
-            carId.includes(searchLower);
-    });
+            // 1. I-check ang Status Filter
+            const matchesStatus = statusFilter === "All" || status === statusFilter;
+
+            // 2. I-check ang Search Term
+            const matchesSearch = customer.includes(searchLower) ||
+                rentalId.includes(searchLower) ||
+                carId.includes(searchLower);
+
+            return matchesStatus && matchesSearch;
+        });
+    }, [bookings, searchTerm, statusFilter]); // Ayaw kalimti i-add ang statusFilter sa dependencies
+
+    // --- PAGINATION LOGIC ---
+    const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredBookings.slice(indexOfFirstItem, indexOfLastItem);
+
+    const goToNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1);
+    };
 
     const getStatusBadge = (status) => {
         switch (status) {
             case 'Approved':
-            case 'Confirmed':
-            case 'Delivered': 
+            case 'Rented':
                 return 'status-badge status-approved';
-            case 'On the Way': 
+            case 'On the Way':
+            case 'Pending Review':
                 return 'status-badge status-pending';
-            case 'Pending Review': return 'status-badge status-pending';
             case 'Refund Required':
-            case 'Rejected': return 'status-badge status-rejected';
-            default: return 'status-badge status-default';
+            case 'Rejected':
+            case 'Cancelled':
+                return 'status-badge status-rejected';
+            case 'Return Requested':
+                return 'status-badge status-info';
+            default:
+                return 'status-badge status-default';
         }
     };
 
-    const handleCancelReview = async (rentalId, action) => {
+    const handleCancelReview = (rentalId, action) => {
         const isApprove = action === "Approved";
+
         const confirmMessage = isApprove
-            ? "Are you sure you want to APPROVE this cancellation and issue the 90% refund?"
+            ? "Are you sure you want to APPROVE this cancellation and issue the 75% refund?"
             : "Are you sure you want to REJECT this cancellation request?";
 
-        if (!window.confirm(confirmMessage)) return;
+        showConfirm(confirmMessage, async () => {
+            try {
+                const response = await fetch(`https://localhost:7263/api/rental/admin/rentals/${rentalId}/cancel-review`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(action)
+                });
 
-        try {
-            const response = await fetch(`https://localhost:7263/api/rental/admin/rentals/${rentalId}/cancel-review`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(action)
-            });
+                if (response.ok) {
+                    showToast(`Cancellation request successfully ${action.toLowerCase()}!`, "success");
 
-            if (response.ok) {
-                alert(`Cancellation request successfully ${action.toLowerCase()}!`);
+                    setBookings(prevBookings =>
+                        prevBookings.map(b =>
+                            (b.rentalID === rentalId || b.rentalId === rentalId)
+                                ? { ...b, status: isApprove ? 'Cancelled' : 'Approved' }
+                                : b
+                        )
+                    );
+                } else {
+                    const errData = await response.json();
+                    showToast(`Failed: ${errData.message || 'Unknown error'}`, "error");
+                }
 
-                setBookings(prevBookings =>
-                    prevBookings.map(b =>
-                        (b.rentalID === rentalId || b.rentalId === rentalId)
-                            ? { ...b, status: isApprove ? 'Cancelled' : 'Confirmed' }
-                            : b
-                    )
-                );
-            } else {
-                const errData = await response.json();
-                alert(`Failed to process request: ${errData.message || 'Unknown error'}`);
+            } catch (error) {
+                console.error("Error processing cancellation review:", error);
+                showToast("Network error while processing cancellation.", "error");
             }
-        } catch (error) {
-            console.error("Error processing cancellation review:", error);
-            alert("A network error occurred while processing the cancellation.");
-        }
+        });
     };
 
-    const handleUpdateStatus = async (rentalId, newStatus) => {
-        if (!window.confirm(`Are you sure you want to mark this booking as ${newStatus}?`)) return;
+    const handleUpdateStatus = (rentalId, newStatus) => {
+        showConfirm(`Are you sure you want to mark this booking as ${newStatus}?`, async () => {
+            try {
+                const response = await fetch(`https://localhost:7263/api/rental/admin/rentals/${rentalId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newStatus)
+                });
 
-        try {
-            const response = await fetch(`https://localhost:7263/api/rental/admin/rentals/${rentalId}/status`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newStatus)
-            });
+                if (response.ok) {
+                    showToast(`Status successfully updated to ${newStatus}`, "success");
 
-            if (response.ok) {
-                alert(`Status successfully updated to ${newStatus}`);
+                    setBookings(prevBookings =>
+                        prevBookings.map(b =>
+                            (b.rentalID === rentalId || b.rentalId === rentalId)
+                                ? { ...b, status: newStatus }
+                                : b
+                        )
+                    );
+                } else {
+                    showToast("Failed to update status", "error");
+                }
 
-            
-                setBookings(prevBookings =>
-                    prevBookings.map(b =>
-                        (b.rentalID === rentalId || b.rentalId === rentalId) ? { ...b, status: newStatus } : b
-                    )
-                );
-            } else {
-                alert("Failed to update status");
+            } catch (error) {
+                console.error("Error updating status:", error);
+                showToast("Network error occurred.", "error");
             }
-        } catch (error) {
-            console.error("Error updating status:", error);
-            alert("A network error occurred.");
-        }
+        });
     };
 
     const handleCheckOverdue = async () => {
@@ -217,54 +397,155 @@ function ManageBooking() {
             const result = await response.json();
 
             if (response.ok) {
-                alert(result.message || "Overdue check completed successfully!");
-                fetchBookings(); // I-refresh ang table aron makita ang mga na-overdue
+                showToast(result.message || "Overdue check completed successfully!");
+                fetchBookings();
+                setCurrentPage(1);
             } else {
-                alert(`Failed to check overdue: ${result.message || 'Unknown error'}`);
+                showToast(`Failed to check overdue: ${result.message || 'Unknown error'}`);
             }
         } catch (error) {
             console.error("Error checking overdue:", error);
-            alert("A network error occurred.");
+            showToast("A network error occurred.");
         }
     };
 
-    const handleReturnReview = async (rentalId, action) => {
-        let reasonText = "";
+    const handleReturnReview = (rentalId, action) => {
+        showConfirm(
+            action === "Rejected"
+                ? "Are you sure you want to REJECT this return request?"
+                : "Are you sure you want to ACCEPT this return? Penalties will be calculated if late.",
+            async () => {
 
-        if (action === "Rejected") {
-            const userInput = window.prompt("Why are you rejecting this return? (e.g., Car is not at the shop yet)");
-            if (userInput === null || userInput.trim() === "") {
-                alert("Reason is required to reject a return.");
-                return;
-            }
-            reasonText = userInput;
-        } else {
-            if (!window.confirm("Are you sure you want to ACCEPT this return? Penalties will be calculated if late.")) return;
-        }
+                const processReturn = async (reasonText = "") => {
+                    try {
+                        const response = await fetch(
+                            `https://localhost:7263/api/rental/admin/rentals/${rentalId}/review-return`,
+                            {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action, reason: reasonText })
+                            }
+                        );
 
-        try {
-            const response = await fetch(`https://localhost:7263/api/rental/admin/rentals/${rentalId}/review-return`, {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: action, reason: reasonText })
-            });
+                        const result = await response.json();
 
-            const result = await response.json();
+                        if (response.ok) {
 
-            if (response.ok) {
-                if (action === "Approved" && result.data?.penaltyFee > 0) {
-                    alert(`Return Accepted! Car was late. Penalty Fee: ₱${result.data.penaltyFee.toLocaleString()}`);
+                            if (action === "Approved" && result.data?.penaltyFee > 0) {
+                                showToast(
+                                    `Return Accepted! Penalty Fee: ₱${result.data.penaltyFee.toLocaleString()}`,
+                                    "warning"
+                                );
+                            } else {
+                                showToast(`Return request ${action.toLowerCase()} successfully!`, "success");
+                            }
+
+                            fetchBookings();
+
+                        } else {
+                            showToast(
+                                `Error: ${result.message || 'Unknown error'}`,
+                                "error"
+                            );
+                        }
+
+                    } catch (err) {
+                        console.error("Error reviewing return:", err);
+                        showToast("Network error. Check backend server.", "error");
+                    }
+                };
+
+                // ✅ REPLACE PROMPT WITH INPUT MODAL
+                if (action === "Rejected") {
+                    showInputModal(
+                        "Reject Return Reason",
+                        "Why are you rejecting this return?",
+                        (reasonText) => {
+                            if (!reasonText || reasonText.trim() === "") {
+                                showToast("Reason is required to reject a return.", "warning");
+                                return;
+                            }
+
+                            processReturn(reasonText);
+                        }
+                    );
                 } else {
-                    alert(`Return Request successfully ${action.toLowerCase()}!`);
+                    processReturn("");
                 }
-                fetchBookings(); 
-            } else {
-                alert("Error processing request: " + (result.message || 'Unknown error'));
+
             }
-        } catch (err) {
-            console.error("Error reviewing return:", err);
-            alert("A network error occurred. Check if your C# backend is running.");
-        }
+        );
+    };
+
+    const handleCashPayment = (rentalId) => {
+
+        showInputModal(
+            "Cash Payment",
+            "Enter cash amount for remaining balance...",
+            async (amount) => {
+
+                // validation
+                if (!amount || isNaN(amount) || Number(amount) <= 0) {
+                    showToast("Please enter a valid amount", "warning");
+                    return;
+                }
+
+                try {
+                    const res = await fetch('https://localhost:7263/api/payment/cash-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            rentalId,
+                            amount: parseFloat(amount)
+                        })
+                    });
+
+                    const data = await res.json();
+
+                    if (data.statusCode === 200) {
+                        showToast("Cash Payment Successful!", "success");
+
+                        // optional print receipt
+                        window.print();
+
+                        fetchBookings();
+                    } else {
+                        showToast("Failed: " + (data.message || "Unknown error"), "error");
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    showToast("Network error during cash payment.", "error");
+                }
+            }
+        );
+    };
+
+    const handleOnlineLink = (rentalId) => {
+        showConfirm("Send online payment link to the user?", async () => {
+            try {
+                const res = await fetch(`https://localhost:7263/api/payment/create-balance/${rentalId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        successUrl: `${window.location.origin}/`,
+                        cancelUrl: `${window.location.origin}/`
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.statusCode === 200) {
+                    showToast("Online Payment Link sent successfully!", "success");
+                } else {
+                    showToast("Failed: " + (data.message || "Unknown error"), "error");
+                }
+
+            } catch (err) {
+                console.error(err);
+                showToast("Network error while sending payment link.", "error");
+            }
+        });
     };
 
     if (loading && bookings.length === 0) return <div className="loading-state">Loading bookings...</div>;
@@ -272,67 +553,197 @@ function ManageBooking() {
 
     return (
         <div className="manage-booking-container">
+            {inputModal.show && (
+                <div style={overlayStyle}>
+                    <div style={modalStyle}>
+                        <h3 style={{ marginBottom: "10px" }}>{inputModal.title}</h3>
 
-            {/* Header Section */}
+                        <input
+                            type="text"
+                            value={inputModal.value}
+                            onChange={handleInputChange}
+                            placeholder={inputModal.placeholder}
+                            style={{
+                                width: "100%",
+                                padding: "10px",
+                                marginBottom: "15px",
+                                border: "1px solid #ccc",
+                                borderRadius: "5px"
+                            }}
+                        />
+
+                        <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                            <button
+                                onClick={closeInputModal}
+                                style={{
+                                    backgroundColor: "#6b7280",
+                                    color: "white",
+                                    padding: "8px 14px",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={handleInputSubmit}
+                                style={{
+                                    backgroundColor: "#16a34a",
+                                    color: "white",
+                                    padding: "8px 14px",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {confirmModal.show && (
+                <div style={overlayStyle}>
+                    <div style={modalStyle}>
+                        <h3 style={{ marginBottom: '15px' }}>Confirmation</h3>
+
+                        <p style={{ marginBottom: '20px' }}>
+                            {confirmModal.message}
+                        </p>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                            <button
+                                onClick={handleConfirmNo}
+                                style={{
+                                    backgroundColor: '#6b7280',
+                                    color: 'white',
+                                    padding: '8px 16px',
+                                    border: 'none',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={handleConfirmYes}
+                                style={{
+                                    backgroundColor: '#16a34a',
+                                    color: 'white',
+                                    padding: '8px 16px',
+                                    border: 'none',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                Yes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {toast.show && (
+                <div style={{
+                    position: 'fixed',
+                    top: '24px',    // Adds space from the top edge
+                    right: '24px',  // Adds space from the right edge
+                    backgroundColor:
+                        toast.type === 'success' ? '#16a34a' :
+                            toast.type === 'error' ? '#dc2626' :
+                                '#f59e0b',
+                    color: 'white',
+                    padding: '16px 24px',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+                    zIndex: 2000,
+                    fontWeight: '500',
+                    minWidth: '250px',
+                    textAlign: 'center'
+                }}>
+                    {toast.message}
+                </div>
+            )}
             <div className="page-header">
                 <div>
                     <h2 className="page-title">Manage Bookings</h2>
                     <p className="page-subtitle">Review, approve, or reject customer rental requests.</p>
                 </div>
-
-                <button onClick={handleCheckOverdue} className="btn-danger">
-                    ⚠️ Check Overdue Rentals
-                </button>
-
-                <button onClick={fetchBookings} className="btn-primary">
-                    ↻ Refresh Data
-                </button>
+                <div className="header-actions">
+                    <button onClick={handleCheckOverdue} className="btn-secondary text-orange font-semibold border-orange">
+                        ⚠️ Check Overdue
+                    </button>
+                    <button onClick={() => { fetchBookings(); setCurrentPage(1); }} className="btn-primary">
+                        <span className="icon">↻</span> Refresh Data
+                    </button>
+                </div>
             </div>
 
             {/* Summary Cards */}
-            <div className="summary-cards">
-                <div className="card">
-                    <h3>Total Bookings</h3>
-                    <p className="card-value text-blue">{stats.total}</p>
+            <div className="stats-container">
+                <div className="stat-box">
+                    <h4>Total Bookings</h4>
+                    <p className="text-blue">{stats.total}</p>
                 </div>
-                <div className="card">
-                    <h3>Pending Review</h3>
-                    <p className="card-value text-orange">{stats.pending}</p>
+                <div className="stat-box">
+                    <h4>Pending Review</h4>
+                    <p className="text-orange">{stats.pending}</p>
                 </div>
-                <div className="card">
-                    <h3>Approved</h3>
-                    <p className="card-value text-green">{stats.approved}</p>
+                <div className="stat-box">
+                    <h4>Approved</h4>
+                    <p className="text-green">{stats.approved}</p>
                 </div>
-                <div className="card">
-                    <h3>Confirmed</h3>
-                    <p className="card-value text-purple">{stats.confirmed}</p>
-                </div>
-
-                <div className="card">
-                    <h3>Delivered</h3>
-                    <p className="card-value text-purple">{stats.delivered}</p>
+                <div className="stat-box">
+                    <h4>Rented</h4>
+                    <p className="text-purple">{stats.rented}</p>
                 </div>
             </div>
 
-            {/* Controls Section (Search) */}
-            <div className="table-controls">
+            {/* Controls Bar */}
+            <div className="filter-container" style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                {/* Search Input existing nimo */}
                 <input
                     type="text"
-                    placeholder="Search by Customer, Rental ID, or Car ID..."
-                    className="search-input"
+                    placeholder="Search customer, ID..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-input"
                 />
+
+                {/* BAG-O: Status Filter Dropdown */}
+                <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    style={{
+                        padding: '8px 12px',
+                        borderRadius: '4px',
+                        border: '1px solid #ccc',
+                        backgroundColor: 'white',
+                        cursor: 'pointer'
+                    }}
+                >
+                    <option value="All">All Statuses</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rented">Rented</option>
+                    <option value="Return Requested">Request Return</option>
+                    <option value="Cancellation Requested">Request Cancellation</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+
+                <button onClick={() => { setSearchTerm(""); setStatusFilter("All"); }} className="view-all-btn">
+                    View All
+                </button>
             </div>
 
-            {/* Table Section */}
             <div className="table-wrapper">
                 <table className="booking-table">
                     <thead>
                         <tr>
                             <th>Rental ID</th>
                             <th>Customer</th>
-                            <th>Car ID</th>
+                            <th>Car Name</th>
                             <th>Dates</th>
                             <th>Total Price</th>
                             <th>Status</th>
@@ -347,111 +758,121 @@ function ManageBooking() {
                                 </td>
                             </tr>
                         ) : (
-                            filteredBookings.map((booking, index) => {
+                            currentItems.map((booking, index) => {
                                 const rId = booking.rentalID || booking.rentalId;
                                 const cId = booking.carID || booking.carId;
                                 const uId = booking.userID || booking.userId;
                                 const pId = booking.paymentID || booking.paymentId;
 
                                 return (
-                                    <tr key={rId || index}>
-                                        <td className="font-mono text-muted">#{rId}</td>
-                                        <td>
-                                            <div className="font-medium">{booking.userName}</div>
-                                            <div className="text-sm text-muted">ID: {uId}</div>
+                                    <tr key={rId || index} className="booking-row">
+                                        {/* Rental ID */}
+                                        <td className="cell-padding font-mono text-secondary">
+                                            #{rId}
                                         </td>
-                                        <td className="font-mono">#{cId}</td>
-                                        <td>
-                                            {booking.startDate ? new Date(booking.startDate).toLocaleDateString('en-US', dateOptions) : 'N/A'}
-                                            <span className="text-muted mx-2">  End to </span>
-                                            {booking.endDate ? new Date(booking.endDate).toLocaleDateString('en-US', dateOptions) : 'N/A'}
+
+                                        {/* Customer Details */}
+                                        <td className="cell-padding">
+                                            <div className="text-primary">{booking.fullName}</div>
+                                            <div className="text-secondary">User ID: <span className="font-mono">{uId}</span></div>
                                         </td>
-                                        <td className="font-semibold">₱{(booking.totalPrice || 0).toLocaleString()}</td>
-                                        <td>
+
+                                        {/* Car Details */}
+                                        <td className="cell-padding">
+                                            <div className="text-primary">{booking.carName}</div>
+                                            <div className="text-secondary">Car ID: <span className="font-mono">#{cId}</span></div>
+                                        </td>
+
+                                        {/* Schedule */}
+                                        <td className="cell-padding">
+                                            <div className="schedule-container">
+                                                <div className="schedule-row">
+                                                    <span className="schedule-label">Out</span>
+                                                    <span className="schedule-value">{booking.startDate ? new Date(booking.startDate).toLocaleDateString('en-US', dateOptions) : 'N/A'}</span>
+                                                </div>
+                                                <div className="schedule-row">
+                                                    <span className="schedule-label">In</span>
+                                                    <span className="schedule-value">{booking.endDate ? new Date(booking.endDate).toLocaleDateString('en-US', dateOptions) : 'N/A'}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        {/* Total Price */}
+                                        <td className="cell-padding text-price">
+                                            ₱{(booking.totalPrice || 0).toLocaleString()}
+                                        </td>
+
+                                        {/* Status */}
+                                        <td className="cell-padding">
                                             <span className={getStatusBadge(booking.status)}>
                                                 {booking.status}
                                             </span>
                                         </td>
-                                        <td className="text-right">
-                                            {booking.status === 'Pending Review' && (
-                                                <div className="action-buttons">
-                                                    <button
-                                                        onClick={() => handleReview(rId, 'Approved', pId)}
-                                                        className="btn-success btn-sm"
-                                                    >
-                                                        Approve
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleReview(rId, 'Rejected', pId)}
-                                                        className="btn-danger btn-sm"
-                                                    >
-                                                        Reject
-                                                    </button>
-                                                </div>
-                                            )}
 
-                                            {booking.status === 'Cancellation Requested' && (
-                                                <div className="action-buttons">
-                                                    <button
-                                                        onClick={() => handleCancelReview(rId, 'Approved')}
-                                                        className="btn-success btn-sm"
-                                                        title="Approve cancellation and process 90% refund"
-                                                    >
-                                                        Approve Cancel
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleCancelReview(rId, 'Rejected')}
-                                                        className="btn-danger btn-sm"
-                                                        title="Reject cancellation and keep booking confirmed"
-                                                    >
-                                                        Reject Cancel
-                                                    </button>
-                                                </div>
-                                            )}
+                                        {/* Actions */}
+                                        <td className="cell-padding">
+                                            <div className="actions-wrapper">
 
-                                            {booking.status === 'Confirmed' && (
+                                                {/* View Details Button (Always Visible) */}
                                                 <button
-                                                    className="btn-primary btn-sm mx-1"
-                                                    style={{ backgroundColor: '#f59e0b', borderColor: '#f59e0b' }}
-                                                    onClick={() => handleUpdateStatus(rId, 'On the Way')}
+                                                    className="btn-view-details"
+                                                    onClick={() => handleViewDetails(booking)}
+                                                    title="View Booking and License Details"
                                                 >
-                                                    On the Way
+                                                    👁️ View Details
                                                 </button>
-                                            )}
 
-                                            {booking.status === 'On the Way' && (
-                                                <button
-                                                    className="btn-success btn-sm mx-1"
-                                                    onClick={() => handleUpdateStatus(rId, 'Delivered')}
-                                                >
-                                                    Mark Delivered
-                                                </button>
-                                            )}
+                                                {/* Conditional Action Buttons */}
+                                                {booking.status === 'Approved' && (
+                                                    <div className="btn-group">
+                                                        <button className="btn-action-sm btn-green-light" onClick={() => handleCashPayment(rId)}>
+                                                            💵 Receive Cash
+                                                        </button>
+                                                        <button className="btn-action-sm btn-gray-light" onClick={() => handleOnlineLink(rId)}>
+                                                            🔗 Send Link
+                                                        </button>
+                                                    </div>
+                                                )}
 
-                                            {booking.status === 'Return Requested' && (
-                                                <div className="action-buttons" style={{ display: 'flex', gap: '5px', justifyContent: 'flex-end', marginTop: '5px' }}>
-                                                    <button
-                                                        onClick={() => handleReturnReview(rId, 'Approved')}
-                                                        className="btn-success btn-sm"
-                                                        title="Accept Return and calculate penalties"
-                                                        style={{ backgroundColor: '#10b981', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
-                                                    >
-                                                        Accept Return
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleReturnReview(rId, 'Rejected')}
-                                                        className="btn-danger btn-sm"
-                                                        title="Reject Return (e.g., Car not yet at shop)"
-                                                        style={{ backgroundColor: '#ef4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}
-                                                    >
-                                                        Reject Return
-                                                    </button>
-                                                </div>
-                                            )}
+                                                {booking.status === 'Pending Review' && (
+                                                    <div className="btn-group">
+                                                        <button onClick={() => handleReview(rId, 'Approved', pId)} className="btn-action-sm btn-blue-solid">
+                                                            Approve
+                                                        </button>
+                                                        <button onClick={() => handleReview(rId, 'Rejected', pId)} className="btn-action-sm btn-red-light">
+                                                            Reject
+                                                        </button>
+                                                    </div>
+                                                )}
 
-                                            {['Completed', 'Returned', 'Cancelled', 'Rejected', 'Refund Required'].includes(booking.status) && (
-                                                <span className="text-muted text-sm italic">Action Completed</span>
-                                            )}
+                                                {booking.status === 'Cancellation Requested' && (
+                                                    <div className="btn-group">
+                                                        <button onClick={() => handleCancelReview(rId, 'Approved')} className="btn-action-sm btn-amber-solid" title="Approve cancellation and process 90% refund">
+                                                            Approve Cancel
+                                                        </button>
+                                                        <button onClick={() => handleCancelReview(rId, 'Rejected')} className="btn-action-sm btn-gray-light" title="Reject cancellation and keep booking confirmed">
+                                                            Reject Cancel
+                                                        </button>
+                                                    </div>
+                                                )}
+
+                                                {booking.status === 'Return Requested' && (
+                                                    <div className="btn-group">
+                                                        <button onClick={() => handleReturnReview(rId, 'Approved')} className="btn-action-sm btn-indigo-solid" title="Accept Return and calculate penalties">
+                                                            Accept Return
+                                                        </button>
+                                                        <button onClick={() => handleReturnReview(rId, 'Rejected')} className="btn-action-sm btn-rose-light" title="Reject Return (e.g., Car not yet at shop)">
+                                                            Reject Return
+                                                        </button>
+                                                    </div>
+                                                )}
+
+                                                {['Completed', 'Returned', 'Cancelled', 'Rejected', 'Refund Required'].includes(booking.status) && (
+                                                    <div className="action-completed-text">
+                                                        Action Completed
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 );
@@ -460,6 +881,121 @@ function ManageBooking() {
                     </tbody>
                 </table>
             </div>
+
+            {/* PAGINATION CONTROLS */}
+            {totalPages > 1 && (
+                <div className="pagination-container">
+                    <button
+                        className="pagination-btn"
+                        onClick={goToPrevPage}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </button>
+
+                    <span className="pagination-info">
+                        Page {currentPage} of {totalPages}
+                    </span>
+
+                    <button
+                        className="pagination-btn"
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
+
+            {/* ✅ VIEW DETAILS MODAL */}
+            {showModal && selectedBooking && (
+                <div className="paper-overlay">
+                    <div className="paper-document">
+
+                        {/* 📜 WATERMARK / STAMP EFFECT */}
+                        <div className={`doc-stamp stamp-${(selectedBooking.status || '').replace(/\s+/g, '-').toLowerCase()}`}>
+                            {selectedBooking.status}
+                        </div>
+
+                        {/* 🏢 DOCUMENT HEADER */}
+                        <div className="paper-header">
+                            <div className="company-branding">
+                                <h2 className="company-title">JKLM CAR RENTAL</h2>
+                                <p className="doc-subtitle">Official Booking Review Document</p>
+                            </div>
+                            <div className="doc-meta">
+                                <p><strong>Doc Ref:</strong> #{selectedBooking.rentalId || selectedBooking.rentalID}</p>
+                                <p><strong>Date Issued:</strong> {new Date().toLocaleDateString()}</p>
+                            </div>
+                        </div>
+
+                        <div className="paper-divider"></div>
+
+                        {/* 📋 DOCUMENT BODY (FORM-STYLE) */}
+                        <div className="paper-body">
+                            <div className="info-block">
+                                <h3>I. Customer Details</h3>
+                                <div className="info-row">
+                                    <span className="info-label">Full Name:</span>
+                                    <span className="info-value">{selectedBooking.fullName || selectedBooking.customerName}</span>
+                                </div>
+                                <div className="info-row">
+                                    <span className="info-label">Contact Number:</span>
+                                    <span className="info-value">{selectedBooking.contactNumber || 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            <div className="info-block">
+                                <h3>II. Rental Schedule</h3>
+                                <div className="info-row">
+                                    <span className="info-label">Pick-up Location:</span>
+                                    <span className="info-value">{selectedBooking.pickupLocation || 'N/A'}</span>
+                                </div>
+                                <div className="info-row">
+                                    <span className="info-label">Start Date:</span>
+                                    <span className="info-value">{new Date(selectedBooking.startDate).toLocaleDateString()}</span>
+                                </div>
+                                <div className="info-row">
+                                    <span className="info-label">End Date:</span>
+                                    <span className="info-value">{new Date(selectedBooking.endDate).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 🪪 ATTACHMENT SECTION */}
+                        <div className="paper-attachment">
+                            <h3>III. Attached Driver's License</h3>
+                            <div className="license-frame">
+                                {selectedBooking.driverLicense ? (
+                                    <img
+                                        src={`https://localhost:7263/uploads/licenses/${selectedBooking.driverLicense}`}
+                                        alt="Driver License"
+                                        onError={(e) => {
+                                            e.target.src = '/default-placeholder.png';
+                                            e.target.alt = 'Image not found';
+                                        }}
+                                    />
+                                ) : (
+                                    <p className="no-license">⚠️ No License Uploaded</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* ✒️ FOOTER & SIGNATURE AREA */}
+                        <div className="paper-footer">
+                            <div className="signature-area">
+                                <div className="sign-line"></div>
+                                <p>Authorized Admin Signature</p>
+                            </div>
+                            <div className="action-buttons">
+                                <button className="btn-print" onClick={() => window.print()}>🖨️ Print Document</button>
+                                <button className="btn-close-paper" onClick={closeModal}>Close</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

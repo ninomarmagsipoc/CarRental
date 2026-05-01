@@ -1,7 +1,4 @@
 .header {
-    position: sticky;  /* makes it stick */
-    top: 0;            /* stick to top */
-    z-index: 1000; 
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -9,6 +6,11 @@
     background: #000000; /* Facebook blue */
     color: white;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    height: 80px;
+    z-index: 1000;
+
 }
 
 
@@ -219,4 +221,50 @@
         box-shadow: none;
         border: 1px solid #333;
     }
+}
+
+/* Ensure the auth links list aligns items correctly */
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Adjust spacing between search, bell, and profile */
+}
+
+/* Notification Bell Container */
+.notification-icon-container {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff; /* Sets the icon color to white */
+    transition: color 0.2s ease-in-out;
+    list-style: none; /* Removes any default list styles */
+}
+
+.notification-icon-container:hover {
+    color: #e0e0e0; /* Slight dim on hover */
+}
+
+.bell-icon {
+    font-size: 1.5rem; /* Matches relative sizing to the profile pic */
+}
+
+/* Red Notification Badge */
+.badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background-color: #ff3b30; /* Vibrant red */
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }

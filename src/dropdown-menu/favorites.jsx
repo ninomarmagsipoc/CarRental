@@ -73,7 +73,7 @@ function Favorite({ isLoggedIn }) {
                                     ❤️
                                 </button>
                                 <img
-                                    src={`https://localhost:7263/images/${car.carImage}`}
+                                    src={`https://localhost:7263/${car.carImage}`}
                                     alt={car.carName}
                                 />
                             </div>

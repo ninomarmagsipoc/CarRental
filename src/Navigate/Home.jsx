@@ -9,7 +9,9 @@ import { useEffect, useState } from 'react';
 function Home() {
     const [cars, setCars] = useState([]);
     const [paymentMessage, setPaymentMessage] = useState("");
+    const [paymentStatus, setPaymentStatus] = useState("");
     const navigate = useNavigate();
+
 
     useEffect(() => {
         fetchCars();
@@ -21,24 +23,36 @@ function Home() {
             if (!ref) return;
 
             try {
+                setPaymentStatus("loading");
                 setPaymentMessage("Verifying your payment... Please wait.");
+
                 const res = await fetch(`https://localhost:7263/api/payment/verify?payMongoReference=${ref}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" }
                 });
+
                 const data = await res.json();
 
                 if (data.statusCode === 200 || data.data === true) {
-                    alert("✅ Payment Successful! Your booking is now Pending Review by the Admin.");
+                    setPaymentStatus("success");
+                    setPaymentMessage(data.message || "Payment Successful!");
                 } else {
-                    alert("❌ Payment verification failed: " + data.message);
+                    setPaymentStatus("error");
+                    setPaymentMessage(data.message || "Payment verification failed.");
                 }
+
             } catch (error) {
                 console.error("Error verifying payment:", error);
-                alert("Network error while verifying your payment.");
+                setPaymentStatus("error");
+                setPaymentMessage("Network error while verifying your payment.");
             } finally {
                 localStorage.removeItem("payMongoRef");
-                setPaymentMessage("");
+
+                // auto hide after 3 seconds
+                setTimeout(() => {
+                    setPaymentMessage("");
+                    setPaymentStatus("");
+                }, 3000);
             }
         };
 
@@ -57,6 +71,14 @@ function Home() {
 
     return (
         <>
+            {paymentMessage && (
+                <div className="floating-alert-overlay">
+                    <div className={`floating-alert ${paymentStatus}`}>
+                        <p>{paymentMessage}</p>
+                    </div>
+                </div>
+            )}
+            
             <div className='body1'>
                 <div className='container'>
                     <h1 className='h1'>Rent Your Dream Car Today!</h1>
@@ -79,7 +101,7 @@ function Home() {
                             <div key={index} className="car-card">
                                 <div className="car-image-wrapper">
                                     <img
-                                        src={`https://localhost:7263/images/${car.CarImage || car.carImage}`}
+                                        src={`https://localhost:7263/${car.CarImage || car.carImage}`}
                                         alt={car.CarName || car.carName}
                                         className="car-img"
                                         onError={(e) => { e.target.src = '/default-car.png' }}
@@ -116,21 +138,21 @@ function Home() {
                     <h2>Meet the Developers</h2>
                     <p>The minds behind the system</p>
                 </div>
-                
+
                 <div className="creators-grid">
                     <div className="creator-card">
                         <div className="creator-image-container">
-                            <img 
-                                src={ninoImage} 
-                                alt="Nino Mar" 
+                            <img
+                                src={ninoImage}
+                                alt="Nino Mar"
                                 className="creator-profile-pic" />
                         </div>
                         <div className="creator-info">
                             <h3>Magsipoc, Niño Mar U.</h3>
                             <p>Backend Developer</p>
-                            <a 
-                                href="https://www.facebook.com/shanon.nam.1" 
-                                target="_blank" 
+                            <a
+                                href="https://www.facebook.com/shanon.nam.1"
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 className="fb-link-btn"
                             >
@@ -140,18 +162,18 @@ function Home() {
                     </div>
                     <div className="creator-card">
                         <div className="creator-image-container">
-                            <img 
-                                src={lawrence} 
-                                alt="Creator Name" 
+                            <img
+                                src={lawrence}
+                                alt="Creator Name"
                                 className="creator-profile-pic"
                             />
                         </div>
                         <div className="creator-info">
                             <h3>Maligro, Lawrence R.</h3>
                             <p>Frontend Developer</p>
-                            <a 
-                                href="https://www.facebook.com/lawrence.maligro.2024" 
-                                target="_blank" 
+                            <a
+                                href="https://www.facebook.com/lawrence.maligro.2024"
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 className="fb-link-btn"
                             >
@@ -161,18 +183,18 @@ function Home() {
                     </div>
                     <div className="creator-card">
                         <div className="creator-image-container">
-                            <img 
-                                src={jacob} 
-                                alt="Creator Name" 
+                            <img
+                                src={jacob}
+                                alt="Creator Name"
                                 className="creator-profile-pic"
                             />
                         </div>
                         <div className="creator-info">
                             <h3>Bugtong, John Jacob D.</h3>
                             <p>Mobile Developer</p>
-                            <a 
-                                href="https://www.facebook.com/johnz.desabelle" 
-                                target="_blank" 
+                            <a
+                                href="https://www.facebook.com/johnz.desabelle"
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 className="fb-link-btn"
                             >
@@ -182,18 +204,18 @@ function Home() {
                     </div>
                     <div className="creator-card">
                         <div className="creator-image-container">
-                            <img 
-                                src={kyla} 
-                                alt="Creator Name" 
+                            <img
+                                src={kyla}
+                                alt="Creator Name"
                                 className="creator-profile-pic"
                             />
                         </div>
                         <div className="creator-info">
                             <h3>Francisco, kyla B.</h3>
                             <p>Tester & Document Specialist</p>
-                            <a 
-                                href="https://www.facebook.com/lala.franz.77" 
-                                target="_blank" 
+                            <a
+                                href="https://www.facebook.com/lala.franz.77"
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 className="fb-link-btn"
                             >
@@ -201,7 +223,7 @@ function Home() {
                             </a>
                         </div>
                     </div>
-                    
+
                 </div>
             </section>
         </>
