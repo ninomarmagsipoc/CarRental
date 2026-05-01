@@ -18,10 +18,11 @@ import ManageCars from "./admin/manageCar"
 import ManageCustomer from "./admin/manageCustomers"
 import ManagePayment from "./admin/managePayment"
 import ReportAnalytics from "./admin/reportAnalytics"
-import RentalHistory from "./admin/rentalHistory"
 import Notification from "./dropdown-menu/notification"
 import Favorite from "./dropdown-menu/favorites"
 import MyRentalHistory from "./dropdown-menu/rent-history"
+import NotificationAdmin from "./admin/notificationAmin"
+import Archive from "./dropdown-menu/archive"
 
 function AppWrapper() {
   return (
@@ -38,13 +39,13 @@ function App() {
 
   const hideHeader = location.pathname.startsWith("/admin");
 
-  useEffect (() =>{
+  useEffect(() => {
     if (!location.pathname.startsWith("/admin") && localStorage.getItem("admin")) {
       localStorage.removeItem("admin");
 
       setIsLogIn(!!localStorage.getItem("user"));
     }
-  },[location.pathname]);
+  }, [location.pathname]);
 
   return (
     <>
@@ -54,30 +55,28 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/car" element={<Car isLoggedIn={isLoggedIn} />} />
         <Route path="/login" element={<Login setIsLogIn={setIsLogIn} />} />
-        <Route path="/booking/:carName" element={<Rental isLoggedIn={isLoggedIn}/>}></Route>
+        <Route path="/booking/:carName" element={<Rental isLoggedIn={isLoggedIn} />}></Route>
         <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<Verify />}></Route>
         <Route path="/forgot" element={<ForgotPass />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/notifications" element={<Notification />}></Route>
-        <Route path="/favorites" element={<Favorite isLoggedIn={isLoggedIn}/>}></Route>
+        <Route path="/favorites" element={<Favorite isLoggedIn={isLoggedIn} />}></Route>
         <Route path="/my-rentals" element={<MyRentalHistory />} />
+        <Route path="/archive" element={<Archive />} />
 
 
         <Route path="/admin" element={<AdminLayout setIsLogIn={setIsLogIn} />}>
-          <Route index element={<AdminDashboard />}/>
-          <Route path="manage-booking" element={<ManageBooking/>}/>
-          <Route path="manage-car" element={<ManageCars/>}/>
-          <Route path="customers" element={<ManageCustomer/>}/>
-          <Route path="manage-payment" element={<ManagePayment/>}/>
-          <Route path="report-analytics" element={<ReportAnalytics/>}/>
-          <Route path="rental-history" element={<RentalHistory/>}/>
-          
-
+          <Route index element={<AdminDashboard />} />
+          <Route path="manage-booking" element={<ManageBooking />} />
+          <Route path="manage-car" element={<ManageCars />} />
+          <Route path="customers" element={<ManageCustomer />} />
+          <Route path="manage-payment" element={<ManagePayment />} />
+          <Route path="notifications" element={<NotificationAdmin />} />
         </Route>
       </Routes>
 
-      {!hideHeader &&<Footer />}
+      {!hideHeader && <Footer />}
     </>
 
   )

@@ -1,227 +1,282 @@
-/* --- Base Page Layout --- */
+/* =========================================
+   PREMIUM BLACK & WHITE THEME
+   ========================================= */
+
 .rental-page {
-  max-width: 1000px;
-  margin: 0 auto;
+  background-color: #fcfcfc;
+  min-height: 100vh;
   padding: 40px 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #111;
 }
 
 .rental-title {
   text-align: center;
-  font-size: 2.2rem;
-  margin-bottom: 20px;
-  color: #2c3e50;
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+  color: #000;
 }
 
-/* --- Card Layout (Flexbox for Desktop/Mobile) --- */
 .rental-card {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #fff;
   display: flex;
   flex-direction: row;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  gap: 50px;
+  padding: 40px;
   border: 1px solid #eaeaea;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
 }
 
-/* --- LEFT SIDE: Image & Car Details --- */
+/* --- LEFT SIDE: Info & Image --- */
 .rental-left {
   flex: 1;
-  max-width: 50%;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
-  border-right: 1px solid #eaeaea;
-}
-
-.rental-image {
-  width: 100%;
+  gap: 25px;
 }
 
 .rental-image img {
   width: 100%;
-  height: 350px; /* Adjust this height if needed so the image doesn't stretch too far */
+  border-radius: 4px;
   object-fit: cover;
-  display: block;
+  background: #f4f4f4;
 }
 
 .car-details {
-  padding: 25px 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eaeaea;
 }
 
 .car-details p {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  color: #333;
+  margin: 8px 0;
+  font-size: 1.05rem;
+}
+
+.car-details strong {
+  font-weight: 600;
+  color: #000;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
 }
 
 .car-desc {
-  font-size: 1rem !important;
-  color: #666 !important;
-  margin-bottom: 20px !important;
-  line-height: 1.5;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+/* Agreement Box */
+.agreement-box {
+  background-color: #f9f9f9;
+  border-left: 4px solid #000;
+  padding: 20px;
+  border-radius: 4px;
+}
+
+.agreement-box h3 {
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  font-weight: 700;
+  color: #000;
+}
+
+.agreement-box ul {
+  margin-top: 10px;
+  padding-left: 20px;
+  color: #444;
+  line-height: 1.7;
 }
 
 /* --- RIGHT SIDE: Form --- */
 .rental-right {
   flex: 1;
-  padding: 30px 40px;
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
 .rental-form-group {
-  margin-top: 0; /* Removed top margin since info is gone */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-label {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #4a4a4a;
-  margin-bottom: -5px;
+.rental-form-group label, 
+.rental-dates label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #333;
+  margin-bottom: 5px;
+  display: block;
 }
 
-input {
+/* Inputs, Selects, & File Upload */
+.rental-form-group input[type="text"],
+.rental-form-group input[type="tel"],
+.rental-form-group select,
+.rental-form-group input[type="file"],
+.calendar-input {
   width: 100%;
-  padding: 12px 15px;
+  padding: 14px 16px;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #000;
+  transition: all 0.3s ease;
   box-sizing: border-box;
+  outline: none;
 }
 
-input:focus {
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+.rental-form-group input:focus,
+.rental-form-group select:focus,
+.calendar-input:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 1px #000;
 }
 
-input:disabled {
-  color: #6c757d;
+.input-error {
+  border-color: #d93025 !important;
 }
 
-/* --- Total Price Display --- */
+.error-text {
+  color: #d93025;
+  font-size: 0.8rem;
+  margin-top: -10px;
+  display: block;
+  font-weight: 500;
+}
+
+/* Dates */
+.rental-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Total Price Display */
 .rental-total {
-  margin-top: 25px;
-  padding: 15px;
-  background-color: #eafaf1;
-  border-left: 5px solid #2ecc71;
-  border-radius: 6px;
+  margin-top: 10px;
+  padding: 25px;
+  background-color: #000;
+  color: #fff;
+  border-radius: 4px;
+  text-align: right;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .rental-total p {
   margin: 5px 0;
-  color: #27ae60;
   font-size: 1.1rem;
 }
 
 .rental-total p:last-child {
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   font-weight: 700;
 }
 
-/* --- Buttons & Messages --- */
+/* Main Action Button */
 .rental-btn {
-  margin-top: 30px;
-  width: 100%;
-  padding: 15px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: white;
-  background-color: #2ecc71;
+  background-color: #000;
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  padding: 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.1s ease;
+  margin-top: 10px;
 }
 
 .rental-btn:hover:not(:disabled) {
-  background-color: #27ae60;
+  background-color: #222;
 }
 
 .rental-btn:active:not(:disabled) {
-  transform: translateY(2px);
+  transform: scale(0.98);
 }
 
 .rental-btn:disabled {
-  background-color: #95a5a6;
+  background-color: #ccc;
+  color: #666;
   cursor: not-allowed;
-  opacity: 0.8;
 }
 
 .rental-message {
-  margin-top: 15px;
   text-align: center;
+  margin-top: 15px;
   font-weight: 600;
-  color: #e74c3c;
-  padding: 10px;
-  border-radius: 5px;
-  background-color: #fdf2f0;
+  color: #ff0000;
 }
 
 /* =========================================
-   📱 RESPONSIVE DESIGN (MOBILE & TABLET)
+   DATEPICKER OVERRIDES FOR BLACK & WHITE 
    ========================================= */
+.react-datepicker-wrapper {
+  width: 100%;
+}
 
-/* For tablets and smaller screens */
-@media (max-width: 900px) {
+.react-datepicker {
+  border: 1px solid #eaeaea !important;
+  border-radius: 4px !important;
+  font-family: inherit !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.react-datepicker__header {
+  background-color: #fff !important;
+  border-bottom: 1px solid #eaeaea !important;
+}
+
+.react-datepicker__current-month, 
+.react-datepicker-time__header, 
+.react-datepicker-year-header,
+.react-datepicker__day-name {
+  color: #000 !important;
+  font-weight: 700 !important;
+}
+
+.react-datepicker__day--selected, 
+.react-datepicker__day--in-selecting-range, 
+.react-datepicker__day--in-range {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-radius: 4px !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: #f0f0f0 !important;
+  color: #000 !important;
+  border-radius: 4px !important;
+}
+
+/* Booked Dates Status */
+.rented-green-date {
+  background-color: #000000 !important; /* Changed to black/grey to match luxury theme */
+  opacity: 0.3;
+  color: white !important;
+  border-radius: 4px;
+  cursor: not-allowed !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .rental-card {
-    flex-direction: column; 
+    flex-direction: column;
+    padding: 20px;
   }
-
-  .rental-left {
-    max-width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #eaeaea;
-  }
-
-
-  .rental-image {
-    max-width: 100%;
-    height: 300px; /* Fixed height for image on mobile */
-  }
-
-  .rental-info {
-    padding: 25px 20px;
-  }
-}
-
-/* For smaller mobile phones */
-@media (max-width: 480px) {
-  .rental-page {
-    padding: 20px 15px;
-  }
-
-  .rental-title {
-    font-size: 1.8rem;
-  }
-
-  .rental-image {
-    height: 250px;
-  }
-
-  .rental-btn {
-    padding: 12px;
-    font-size: 1rem;
-  }
-}
-
-/* --- Validation Errors --- */
-.error-text {
-  color: #e74c3c;
-  font-size: 0.85rem;
-  margin-top: -8px; /* Pulls it closer to the input above it */
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-.input-error {
-  border-color: #e74c3c !important;
-  background-color: #fdf2f0;
-}
-
-.input-error:focus {
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
 }

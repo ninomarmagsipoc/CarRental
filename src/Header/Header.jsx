@@ -1,5 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { HubConnectionBuilder } from '@microsoft/signalr';
 import { useState, useEffect, useRef } from 'react';
+import { FaBell } from 'react-icons/fa'; // Added Bell Icon
 import '../Css/header.css';
 
 function Header({ isLoggedIn, setIsLogIn }) {
@@ -8,9 +10,64 @@ function Header({ isLoggedIn, setIsLogIn }) {
     const location = useLocation();
     const [search, setSearch] = useState("");
     const [showMenu, setShowMenu] = useState(false);
-    
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
+
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [profilePic, setProfilePic] = useState("https://i.pravatar.cc/40");
+
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        let connection = null;
+
+        const fetchUnreadCount = async () => {
+            const storedUserId = localStorage.getItem("userId");
+            if (!storedUserId) return;
+
+            try {
+                const response = await fetch(`https://localhost:7263/api/notification/unread-count/${storedUserId}`);
+                if (response.ok) {
+                    const count = await response.json();
+                    setUnreadCount(count);
+                }
+            } catch (error) {
+                console.error("Failed to fetch notification count:", error);
+            }
+        };
+
+        const setupNotifications = async () => {
+            if (isLoggedIn) {
+                await fetchUnreadCount();
+
+                connection = new HubConnectionBuilder()
+                    .withUrl("https://localhost:7263/notificationHub")
+                    .withAutomaticReconnect()
+                    .build();
+
+                connection.on("ReceiveUserNotification", (targetUserId, newCount) => {
+                    console.log("Naay bag-ong notification! Total:", newCount);
+                    setUnreadCount(newCount);
+                });
+
+                try {
+                    await connection.start();
+                    console.log("Connected to SignalR from Header!");
+                } catch (err) {
+                    console.error("SignalR Connection Error: ", err);
+                }
+            }
+        };
+
+        setupNotifications();
+
+        window.addEventListener('notificationRead', fetchUnreadCount);
+
+        return () => {
+            if (connection) {
+                connection.stop();
+            }
+            window.removeEventListener('notificationRead', fetchUnreadCount);
+        };
+    }, [isLoggedIn]);
 
     const menuRef = useRef();
 
@@ -27,6 +84,7 @@ function Header({ isLoggedIn, setIsLogIn }) {
 
         window.addEventListener("profileUpdated", loadProfilePic);
 
+        return () => window.removeEventListener("profileUpdated", loadProfilePic);
     }, []);
 
     useEffect(() => {
@@ -45,7 +103,8 @@ function Header({ isLoggedIn, setIsLogIn }) {
         localStorage.removeItem("user");
         localStorage.removeItem("userId");
         localStorage.removeItem("userEmail");
-        localStorage.removeItem("userRole"); 
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("token")
         setIsLogIn(false);
         setShowMenu(false);
         setIsMobileMenuOpen(false);
@@ -55,7 +114,7 @@ function Header({ isLoggedIn, setIsLogIn }) {
     const handleSearch = (e) => {
         e.preventDefault();
 
-        if (!search.trim()) return; 
+        if (!search.trim()) return;
 
         if (location.pathname === "/car") {
             navigate(`/car?search=${search}`);
@@ -63,8 +122,8 @@ function Header({ isLoggedIn, setIsLogIn }) {
             navigate(`/car?search=${search}`);
         }
 
-        setSearch(""); 
-        setIsMobileMenuOpen(false); 
+        setSearch("");
+        setIsMobileMenuOpen(false);
     };
 
     const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -76,8 +135,8 @@ function Header({ isLoggedIn, setIsLogIn }) {
                 <span className="logo-sub">Car Rental</span>
             </div>
 
-            <div 
-                className={`hamburger ${isMobileMenuOpen ? "active" : ""}`} 
+            <div
+                className={`hamburger ${isMobileMenuOpen ? "active" : ""}`}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
                 <span className="bar"></span>
@@ -94,7 +153,6 @@ function Header({ isLoggedIn, setIsLogIn }) {
                     </ul>
                 </nav>
 
-                {/* 🔍 SEARCH BAR */}
                 <form className="search-bar" onSubmit={handleSearch}>
                     <input
                         type="text"
@@ -107,28 +165,38 @@ function Header({ isLoggedIn, setIsLogIn }) {
 
                 <ul className="nav-links auth-links">
                     {isLoggedIn ? (
-                        <li className="profile-container">
-                            <div
-                                className="profile-circle"
-                                onClick={() => setShowMenu(!showMenu)}
+                        <>
+                            <li
+                                className="notification-icon-container"
+                                onClick={() => { navigate("/notifications"); closeMobileMenu(); }}
                             >
-                                <img
-                                    src={profilePic}
-                                    alt="profile"
-                                />
-                            </div>
+                                <FaBell className="bell-icon" />
+                                {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
+                            </li>
 
-                            {showMenu && (
-                                <div className="dropdown-menu" ref={menuRef}>
-                                    <p onClick={() => { navigate("/profile"); closeMobileMenu(); }}>Edit Profile</p>
-                                    <p onClick={() => { navigate("/notifications"); closeMobileMenu(); }}>Notifications</p>
-                                    <p onClick={() => { navigate("/favorites"); closeMobileMenu(); }}>Favorite Cars</p>
-                                    <p onClick={() => { navigate("/my-rentals"); closeMobileMenu(); }}>Rent History</p>
-                                    <hr />
-                                    <p className="logout" onClick={HandleLogout}>Logout</p>
+                            <li className="profile-container">
+                                <div
+                                    className="profile-circle"
+                                    onClick={() => setShowMenu(!showMenu)}
+                                >
+                                    <img
+                                        src={profilePic}
+                                        alt="profile"
+                                    />
                                 </div>
-                            )}
-                        </li>
+
+                                {showMenu && (
+                                    <div className="dropdown-menu" ref={menuRef}>
+                                        <p onClick={() => { navigate("/profile"); closeMobileMenu(); }}>Edit Profile</p>
+                                        <p onClick={() => { navigate("/favorites"); closeMobileMenu(); }}>Favorite Cars</p>
+                                        <p onClick={() => { navigate("/my-rentals"); closeMobileMenu(); }}>Rent History</p>
+                                        <p onClick={() => {navigate("/archive"); closeMobileMenu(); }}>Archive</p>
+                                        <hr />
+                                        <p className="logout" onClick={HandleLogout}>Logout</p>
+                                    </div>
+                                )}
+                            </li>
+                        </>
                     ) : (
                         <li>
                             <Link className="login-btn" to="/login" onClick={closeMobileMenu}>Login</Link>

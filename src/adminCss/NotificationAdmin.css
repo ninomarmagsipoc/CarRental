@@ -1,0 +1,113 @@
+/* NotificationAdmin.css */
+.notif-admin-container {
+    padding: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: 'Inter', sans-serif;
+    color: #1a1a1a;
+}
+
+.notif-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #000;
+    padding-bottom: 15px;
+}
+
+.notif-header-section h2 {
+    margin: 0;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 22px;
+}
+
+.btn-bookings {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #000;
+    color: #fff;
+    border: 1px solid #000;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.btn-bookings:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+/* Loading & Empty States */
+.notif-loading, .notif-empty {
+    text-align: center;
+    padding: 60px;
+    background-color: #fcfcfc;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    color: #666;
+}
+
+/* Notification Cards */
+.notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notif-card {
+    padding: 18px;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+/* Unread State (Bolder and Black Border) */
+.notif-card.unread {
+    border-left: 6px solid #000;
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+.notif-card.unread:hover {
+    background-color: #f0f0f0;
+    transform: translateX(5px);
+}
+
+/* Read State */
+.notif-card.read {
+    border-left: 1px solid #e0e0e0;
+    opacity: 0.7;
+}
+
+.notif-message {
+    margin: 0 0 5px 0;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.unread .notif-message {
+    font-weight: 700;
+}
+
+.notif-date {
+    color: #888;
+    font-size: 12px;
+    display: block;
+}
+
+.unread-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #000;
+    border-radius: 50%;
+    margin-left: 15px;
+}

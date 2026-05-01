@@ -47,9 +47,15 @@ function Login({ setIsLogIn }) {
         return;
       }
 
-      // ✅ Success
-      // ✅ Success
       const user = data.Data || data.data;
+      
+      // 🟢 ADDED FOR JWT: Extract the token from the response and save it!
+      const token = user?.token || user?.Token;
+      if (token) {
+          localStorage.setItem("token", token);
+      }
+      
+
       const isVerified = user?.IsVerified || user?.isVerified;
       const role = user?.Role || user?.role;
 
@@ -143,6 +149,7 @@ function Login({ setIsLogIn }) {
               className="login-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              maxLength={50}
             />
             <input
               type="password"
@@ -150,6 +157,7 @@ function Login({ setIsLogIn }) {
               className="login-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              maxLength={50}
             />
             <button className="login-btn" type="submit" disabled={loading}>
               {loading ? "Logging in..." : "Login"}
