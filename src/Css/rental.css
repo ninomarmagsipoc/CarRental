@@ -1,7 +1,3 @@
-/* =========================================
-   PREMIUM BLACK & WHITE THEME
-   ========================================= */
-
 .rental-page {
   background-color: #fcfcfc;
   min-height: 100vh;
@@ -33,7 +29,6 @@
   border-radius: 8px;
 }
 
-/* --- LEFT SIDE: Info & Image --- */
 .rental-left {
   flex: 1;
   display: flex;
@@ -72,7 +67,6 @@
   margin-bottom: 15px;
 }
 
-/* Agreement Box */
 .agreement-box {
   background-color: #f9f9f9;
   border-left: 4px solid #000;
@@ -96,7 +90,6 @@
   line-height: 1.7;
 }
 
-/* --- RIGHT SIDE: Form --- */
 .rental-right {
   flex: 1;
   display: flex;
@@ -121,7 +114,6 @@
   display: block;
 }
 
-/* Inputs, Selects, & File Upload */
 .rental-form-group input[type="text"],
 .rental-form-group input[type="tel"],
 .rental-form-group select,
@@ -158,14 +150,12 @@
   font-weight: 500;
 }
 
-/* Dates */
 .rental-dates {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Total Price Display */
 .rental-total {
   margin-top: 10px;
   padding: 25px;
@@ -186,7 +176,6 @@
   font-weight: 700;
 }
 
-/* Main Action Button */
 .rental-btn {
   background-color: #000;
   color: #fff;
@@ -223,9 +212,6 @@
   color: #ff0000;
 }
 
-/* =========================================
-   DATEPICKER OVERRIDES FOR BLACK & WHITE 
-   ========================================= */
 .react-datepicker-wrapper {
   width: 100%;
 }
@@ -264,16 +250,14 @@
   border-radius: 4px !important;
 }
 
-/* Booked Dates Status */
 .rented-green-date {
-  background-color: #000000 !important; /* Changed to black/grey to match luxury theme */
+  background-color: #000000 !important; 
   opacity: 0.3;
   color: white !important;
   border-radius: 4px;
   cursor: not-allowed !important;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .rental-card {
     flex-direction: column;

@@ -41,17 +41,13 @@ function Rental({ isLoggedIn }) {
   const [cebuPlaces, setCebuPlaces] = useState([]);
   const [loadingPlaces, setLoadingPlaces] = useState(true);
 
-  // State para sa mga dates nga naka-book na (dili ma-click)
   const [bookedDates, setBookedDates] = useState([]);
-  const [statusCode, setStatusCode] = useState(null); // Idugang ni
-  // Example: Pagkuha sa mga Booked Dates gikan sa Backend inig load sa selectedCar
+  const [statusCode, setStatusCode] = useState(null); 
 
   useEffect(() => {
     const fetchBookedDates = async () => {
-      // Siguraduhin na may napiling sasakyan bago mag-fetch
       if (selectedCar && selectedCar.carID) {
         try {
-          // PALITAN ANG URL KUNG IBA ANG PORT NG IYONG C# BACKEND
           const response = await fetch(`https://localhost:7263/api/rental/car/${selectedCar.carID}/booked-dates`);
 
           if (response.ok) {
@@ -59,15 +55,12 @@ function Rental({ isLoggedIn }) {
             let allBlockedDates = [];
 
             existingBookings.forEach(booking => {
-              // Kunin ang tunay na StartDate at EndDate mula sa database
               const start = parseISO(booking.startDate);
               const end = parseISO(booking.endDate);
 
-              // I-apply ang 3 days buffer (Allowance sa maintenance)
               const startWithBuffer = subDays(start, 3);
               const endWithBuffer = addDays(end, 3);
 
-              // Kunin ang lahat ng araw sa pagitan ng Start at End (kasama buffer)
               const datesInRange = eachDayOfInterval({
                 start: startWithBuffer,
                 end: endWithBuffer
@@ -76,7 +69,6 @@ function Rental({ isLoggedIn }) {
               allBlockedDates = [...allBlockedDates, ...datesInRange];
             });
 
-            // I-set ang totoong blocked dates sa state ng kalendaryo
             setBookedDates(allBlockedDates);
           }
         } catch (error) {
@@ -86,7 +78,7 @@ function Rental({ isLoggedIn }) {
     };
 
     fetchBookedDates();
-  }, [selectedCar]); // Mag-re-run ito tuwing magpapalit ng sasakyan
+  }, [selectedCar]); 
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -152,7 +144,7 @@ function Rental({ isLoggedIn }) {
     else if (!/^09\d{9}$/.test(contactNumber)) newErrors.contactNumber = "Must start with '09' and be exactly 11 digits.";
 
     if (!pickupLocation.trim()) newErrors.pickupLocation = "Pickup Location is required.";
-    if (!driverLicense) newErrors.driverLicense = "Driver's License is required."; // 🟢 License Validation
+    if (!driverLicense) newErrors.driverLicense = "Driver's License is required.";
     if (!endDate) newErrors.endDate = "End Date is required.";
 
     setErrors(newErrors);
@@ -162,7 +154,6 @@ function Rental({ isLoggedIn }) {
   const handleRental = async () => {
     if (!isLoggedIn) { navigate("/login"); return; }
 
-    // I-reset ang message ug status code kada click
     setMessage("");
     setStatusCode(null);
 
@@ -171,7 +162,6 @@ function Rental({ isLoggedIn }) {
     const userId = localStorage.getItem("userId");
     setIsProcessing(true);
 
-    // Default to 200 aron black ang loading text
     setStatusCode(200);
     setMessage("Creating your booking...");
 
@@ -195,18 +185,15 @@ function Rental({ isLoggedIn }) {
       const rentalData = await rentalRes.json();
       const rentalId = rentalData.rentalID || rentalData.data?.rentalID || rentalData.Data?.rentalID;
 
-      // 🟢 KUHAON NATO ANG STATUS CODE GIKAN SA C# (200 o 400)
       const currentStatus = rentalData.statusCode || rentalRes.status;
       setStatusCode(currentStatus);
 
-      // KUNG WALAY ID O DILI 200 ANG STATUS (Sama sa Maintenance error)
       if (!rentalId || currentStatus !== 200) {
         setMessage(rentalData.message || "Failed to create rental.");
         setIsProcessing(false);
-        return; // Mo-stop na siya dinhi, ug RED ang mogawas sa screen
+        return; 
       }
 
-      // KUNG 200 SUCCESS:
       setMessage("Booking secured! Redirecting to PayMongo...");
 
       const paymentRes = await fetch("https://localhost:7263/api/payment/create", {
@@ -226,31 +213,28 @@ function Rental({ isLoggedIn }) {
         localStorage.setItem("payMongoRef", paymentData.data.reference);
         window.location.href = paymentData.data.checkoutUrl;
       } else {
-        setStatusCode(400); // I-set og red kung nag-error ang PayMongo
+        setStatusCode(400);
         setMessage("Booking saved, but failed to generate payment link.");
       }
     } catch (err) {
       console.error(err);
-      setStatusCode(500); // I-set og red kung nag-crash ang server
+      setStatusCode(500); 
       setMessage("Server error. Please try again.");
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Kini mag-check kung ang adlaw nga gipakita sa calendar kay under maintenance ba
   const isDateAllowed = (date) => {
     if (selectedCar && selectedCar.maintenanceMonth) {
-      // I-convert ang petsa sa calendar ngadto sa "Month Year" (e.g. "October 2026")
       const calendarMonthYear = date.toLocaleString('en-US', { month: 'long', year: 'numeric' }).toLowerCase();
       const maintMonth = selectedCar.maintenanceMonth.trim().toLowerCase();
 
-      // Kung mag-match ang buwan sa calendar ug ang maintenance month, i-disable
       if (maintMonth === calendarMonthYear) {
-        return false; // Dili pwede ma-click
+        return false; 
       }
     }
-    return true; // Available, pwede ma-click
+    return true; 
   };
 
   if (!selectedCar) {
@@ -262,7 +246,6 @@ function Rental({ isLoggedIn }) {
       <h1 className="rental-title">Rent {selectedCar.carName}</h1>
       <div className="rental-card">
 
-        {/* 🟢 LEFT SIDE: Info & Agreement */}
         <div className="rental-left">
           <div className="rental-image">
             <img src={`https://localhost:7263/${selectedCar.carImage}`} alt={selectedCar.carName} />
@@ -274,7 +257,6 @@ function Rental({ isLoggedIn }) {
             <p><strong>Price per day:</strong> ₱{selectedCar.pricePerDay}</p>
           </div>
 
-          {/* 🟢 BAG-O: AGREEMENT / DESCRIPTION (Limpyo na, way inline styles) */}
           <div className="agreement-box">
             <h3>Rental Agreement & Terms</h3>
             <p><strong>Description:</strong> Well-maintained vehicle, fully air-conditioned, and comes with a full tank upon pick-up.</p>
@@ -287,7 +269,6 @@ function Rental({ isLoggedIn }) {
           </div>
         </div>
 
-        {/* 🟢 RIGHT SIDE: Form */}
         <div className="rental-right">
           <div className="rental-form-group">
 

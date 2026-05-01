@@ -48,13 +48,11 @@ function Login({ setIsLogIn }) {
       }
 
       const user = data.Data || data.data;
-      
-      // 🟢 ADDED FOR JWT: Extract the token from the response and save it!
+
       const token = user?.token || user?.Token;
       if (token) {
-          localStorage.setItem("token", token);
+        localStorage.setItem("token", token);
       }
-      
 
       const isVerified = user?.IsVerified || user?.isVerified;
       const role = user?.Role || user?.role;
@@ -83,7 +81,6 @@ function Login({ setIsLogIn }) {
       }
       setIsLogIn(true);
 
-      // Optional: handle admin redirect
       if (role === "Admin") {
         navigate("/admin", { replace: true });
       } else {
@@ -134,8 +131,8 @@ function Login({ setIsLogIn }) {
           <span className="logo-sub">Car Rental</span>
           <p className="login-sub">Login to continue</p>
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          {success && <p style={{ color: "green" }}>{success}</p>}
+          {error && <p className="error-text">{error}</p>}
+          {success && <p className="success-text">{success}</p>}
 
           <form
             onSubmit={(e) => {
@@ -164,23 +161,27 @@ function Login({ setIsLogIn }) {
             </button>
           </form>
 
-          <button className="login-btn" disabled={loading}>
-            {loading ? "Forgot" : <Link to="/forgot">Forgot Password</Link>}
-          </button>
+          <div className="mt-3">
+            <button className="login-btn outline-btn" type="button" disabled={loading}>
+              {loading ? "Please wait..." : <Link to="/forgot">Forgot Password</Link>}
+            </button>
+          </div>
 
           {/* Resend OTP if not verified */}
           {notVerified && (
-            <button
-              onClick={handleResendOtp}
-              className="login-btn"
-              disabled={loading}
-            >
-              {loading ? "Sending OTP..." : "Resend OTP"}
-            </button>
+            <div className="mt-3">
+              <button
+                onClick={handleResendOtp}
+                className="login-btn outline-btn"
+                disabled={loading}
+              >
+                {loading ? "Sending OTP..." : "Resend OTP"}
+              </button>
+            </div>
           )}
 
           <p className="login-footer">
-            Don't have an account? <Link to="/register">Register</Link>
+            Don't have an account? <Link to="/register" className="register-link">Register</Link>
           </p>
         </div>
       </div>

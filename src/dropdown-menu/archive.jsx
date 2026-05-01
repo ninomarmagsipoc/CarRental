@@ -1,9 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import '../Css/Archived.css'; 
+import '../Css/Archived.css';
 
 function Archive() {
     const [archived, setArchived] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [confirmModal, setConfirmModal] = useState({
+        show: false,
+        message: "",
+        onConfirm: null
+    });
+    const handleConfirmYes = () => {
+        if (confirmModal.onConfirm) {
+            confirmModal.onConfirm();
+        }
+        setConfirmModal({ show: false, message: "", onConfirm: null });
+    };
+
+    const handleConfirmNo = () => {
+        setConfirmModal({ show: false, message: "", onConfirm: null });
+    };
 
     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -25,9 +40,8 @@ function Archive() {
             const result = await response.json();
 
             if (result && result.data) {
-                // 🟢 FILTER LOGIC
-                const trashedRentals = result.data.filter(r => 
-                    (r.isDeleted === true || r.IsDeleted === true) && 
+                const trashedRentals = result.data.filter(r =>
+                    (r.isDeleted === true || r.IsDeleted === true) &&
                     (r.isPermanentlyHidden !== true && r.IsPermanentlyHidden !== true)
                 );
                 setArchived(trashedRentals);
@@ -43,50 +57,90 @@ function Archive() {
         fetchArchivedHistory();
     }, []);
 
-    // 🟢 BAG-O: RESTORE ACTION (Mabalik sa main history)
-    const handleRestore = async (rentalId) => {
-        const confirmRestore = window.confirm("Are you sure you want to restore this record?");
-        if (!confirmRestore) return;
+    const handleRestore = (rentalId) => {
+        setConfirmModal({
+            show: true,
+            message: "Are you sure you want to restore this record?",
+            onConfirm: async () => {
+                try {
+                    const response = await fetch(
+                        `https://localhost:7263/api/rental/${rentalId}/restore`,
+                        { method: 'PUT' }
+                    );
 
-        try {
-            const response = await fetch(`https://localhost:7263/api/rental/${rentalId}/restore`, {
-                method: 'PUT'
-            });
+                    if (response.ok) {
+                        toast.success("Record restored successfully! You can see it again in your Rent History.");
+                        fetchArchivedHistory();
+                    } else {
+                        toast.error("Failed to restore record.");
+                    }
+                } catch (error) {
+                    console.error("Error restoring rental:", error);
+                    toast.error("Something went wrong.");
+                }
 
-            if (response.ok) {
-                alert("Record restored successfully! You can see it again in your Rent History.");
-                fetchArchivedHistory(); // I-refresh ang listahan
-            } else {
-                alert("Failed to restore record.");
+                // close modal
+                setConfirmModal({ show: false, message: "", onConfirm: null });
             }
-        } catch (error) {
-            console.error("Error restoring rental:", error);
-        }
+        });
     };
+    const handlePermanentHide = (rentalId) => {
+        setConfirmModal({
+            show: true,
+            message: "Are you sure you want to permanently delete this record? This action cannot be undone.",
+            onConfirm: async () => {
+                try {
+                    const response = await fetch(
+                        `https://localhost:7263/api/rental/${rentalId}/hide`,
+                        { method: 'PUT' }
+                    );
 
-    // 🟢 PERMANENT HIDE ACTION
-    const handlePermanentHide = async (rentalId) => {
-        const confirmHide = window.confirm("Are you sure you want to permanently delete this record? This action cannot be undone.");
-        if (!confirmHide) return;
+                    if (response.ok) {
+                        toast.success("Record permanently deleted from your view.");
+                        fetchArchivedHistory();
+                    } else {
+                        toast.error("Failed to delete record.");
+                    }
+                } catch (error) {
+                    console.error("Error hiding rental:", error);
+                    toast.error("Something went wrong.");
+                }
 
-        try {
-            const response = await fetch(`https://localhost:7263/api/rental/${rentalId}/hide`, {
-                method: 'PUT'
-            });
-
-            if (response.ok) {
-                alert("Record permanently deleted from your view.");
-                fetchArchivedHistory(); // I-refresh ang listahan
-            } else {
-                alert("Failed to delete record.");
+                // close modal
+                setConfirmModal({ show: false, message: "", onConfirm: null });
             }
-        } catch (error) {
-            console.error("Error hiding rental:", error);
-        }
+        });
     };
 
     return (
         <div className="history-container">
+            {confirmModal.show && (
+                <div className="bw-modal-overlay">
+                    <div className="bw-modal-content" style={{ textAlign: 'center' }}>
+                        <h3 className="mb-15">Confirmation</h3>
+
+                        <p className="mb-20">
+                            {confirmModal.message}
+                        </p>
+
+                        <div className="modal-actions-bw">
+                            <button
+                                onClick={handleConfirmNo}
+                                className="btn-bw-outline"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={handleConfirmYes}
+                                className="btn-bw-solid"
+                            >
+                                Yes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="history-header">
                 <div className="header-flex">
                     <div className="text-content">
@@ -133,17 +187,15 @@ function Archive() {
                                             <td>{new Date(eDate).toLocaleDateString(undefined, dateOptions)}</td>
                                             <td>₱{price.toLocaleString()}</td>
                                             <td style={{ display: 'flex', gap: '10px' }}>
-                                                {/* 🟢 Restore Button */}
-                                                <button 
-                                                    className="btn-action btn-accept" 
+                                                <button
+                                                    className="btn-action btn-accept"
                                                     onClick={() => handleRestore(rId)}
                                                 >
                                                     Restore
                                                 </button>
-                                                
-                                                {/* 🔴 Delete Button */}
-                                                <button 
-                                                    className="btn-action btn-reject" 
+
+                                                <button
+                                                    className="btn-action btn-reject"
                                                     onClick={() => handlePermanentHide(rId)}
                                                 >
                                                     Delete Permanently

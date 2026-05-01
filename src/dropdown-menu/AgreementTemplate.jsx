@@ -1,13 +1,7 @@
-// AgreementTemplate.jsx
-
 export const generateAgreementHTML = (rental, user) => {
-    // Calculate dates and balances
     const startDate = new Date(rental.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     const endDate = new Date(rental.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const balance = rental.totalPrice / 2; // Assuming 50% was paid
-
-    // 🟢 FIX PARA SA CAR NAME: 
-    // Atong i-check ang tanang posibleng location sa carName base sa standard API structures
+    const balance = rental.totalPrice / 2; 
 
     return `
         <html>

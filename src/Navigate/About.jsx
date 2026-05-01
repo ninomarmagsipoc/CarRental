@@ -4,7 +4,6 @@ import '../Css/About.css';
 function About() {
     return (
         <div className="about-page-wrapper">
-            {/* Hero Section */}
             <section className="about-hero">
                 <div className="hero-content">
                     <h1 className="about-title">About Our Car Rental</h1>
@@ -26,7 +25,6 @@ function About() {
 
                 <hr className="divider" />
 
-                {/* Grid Section: Mission, Vision, Values */}
                 <div className="about-grid">
                     <div className="about-card">
                         <h3>Our Mission</h3>
@@ -44,7 +42,6 @@ function About() {
 
                 <hr className="divider" />
 
-                {/* Why Choose Us */}
                 <section className="about-why-us">
                     <h2>Why Choose Us?</h2>
                     <ul className="why-us-list">

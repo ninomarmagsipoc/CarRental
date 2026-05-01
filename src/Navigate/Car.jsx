@@ -7,7 +7,6 @@ function Car({ isLoggedIn }) {
     const location = useLocation();
     const [cars, setCars] = useState([]);
     
-    // 🟢 GI-ADD: State para sa seat filter
     const [selectedSeats, setSelectedSeats] = useState(""); 
 
     const userId = localStorage.getItem("userId") || 0; 
@@ -65,21 +64,16 @@ function Car({ isLoggedIn }) {
         }
     };
 
-    // 🟢 GI-ADD: Pagkuha sa mga unique nga gidaghanon sa seats para sa dropdown
     const uniqueSeats = [...new Set(cars.map(car => car.seats))].sort((a, b) => a - b);
 
-    // 🟢 GI-ILISAN: Gi-update ang filter para ma-apil ang selectedSeats checking
     const filteredCars = cars.filter(car => {
         const words = car.carName.toLowerCase().split(" ");
         const searchLower = searchTerm.toLowerCase();
         
-        // Check kung nag-match sa search text
         const matchesSearch = searchTerm === "" ? true : words.some(word => word.startsWith(searchLower));
         
-        // Check kung nag-match sa gi-select nga seat
         const matchesSeats = selectedSeats === "" ? true : car.seats === parseInt(selectedSeats);
 
-        // I-return lang ang car kung ni-match sa duha (Search ug Seats)
         return matchesSearch && matchesSeats;
     });
 
@@ -87,7 +81,6 @@ function Car({ isLoggedIn }) {
         <div className="car-container">
             <h1 className="title">Available Cars</h1>
 
-            {/* 🟢 GI-ADD: Dropdown UI para sa Seat Filter sa babaw */}
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
                 <label htmlFor="seatFilter" style={{ marginRight: "10px", fontWeight: "bold" }}>
                     Filter by Seats:

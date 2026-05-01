@@ -95,7 +95,6 @@
     object-fit: cover;
 }
 
-/* Dropdown */
 .dropdown-menu {
     position: absolute;
     top: 50px;
@@ -124,12 +123,6 @@
     color: red;
 }
 
-
-/* =========================================
-   NEW CODE: HAMBURGER & MOBILE RESPONSIVENESS 
-   ========================================= */
-
-/* Nav Container (Desktop Default) */
 .nav-container {
     display: flex;
     align-items: center;
@@ -142,7 +135,6 @@
     padding: 0;
 }
 
-/* Hamburger Icon (Hidden on Desktop) */
 .hamburger {
     display: none;
     cursor: pointer;
@@ -150,7 +142,6 @@
     gap: 5px;
 }
 
-/* Make the hamburger bars white to match your theme */
 .hamburger .bar {
     width: 25px;
     height: 3px;
@@ -158,14 +149,11 @@
     transition: all 0.3s ease;
 }
 
-/* Mobile Media Query */
 @media (max-width: 768px) {
-    /* Show the hamburger */
     .hamburger {
         display: flex;
     }
 
-    /* Animate hamburger to 'X' */
     .hamburger.active .bar:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
     }
@@ -176,13 +164,12 @@
         transform: translateY(-8px) rotate(-45deg);
     }
 
-    /* Hide the nav container off-screen */
     .nav-container {
         position: absolute;
-        top: 100%; /* Drops right below your sticky header */
-        left: -100%; /* Hides to the left */
+        top: 100%; 
+        left: -100%; 
         flex-direction: column;
-        background: #000000; /* Match your header background */
+        background: #000000; 
         width: 100%;
         padding: 20px 0;
         box-shadow: 0 10px 10px rgba(0,0,0,0.5);
@@ -191,12 +178,10 @@
         z-index: 999;
     }
 
-    /* Slide nav container in when active */
     .nav-container.active {
         left: 0;
     }
 
-    /* Stack the main nav links */
     .nav-links {
         flex-direction: column;
         gap: 20px;
@@ -213,7 +198,6 @@
         margin-bottom: 20px;
     }
 
-    /* Keep dropdown inside the flow on mobile so it doesn't break out */
     .dropdown-menu {
         position: relative;
         top: 10px;
@@ -223,39 +207,36 @@
     }
 }
 
-/* Ensure the auth links list aligns items correctly */
 .auth-links {
     display: flex;
     align-items: center;
-    gap: 25px; /* Adjust spacing between search, bell, and profile */
+    gap: 25px; 
 }
 
-/* Notification Bell Container */
 .notification-icon-container {
     position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff; /* Sets the icon color to white */
+    color: #ffffff; 
     transition: color 0.2s ease-in-out;
-    list-style: none; /* Removes any default list styles */
+    list-style: none; 
 }
 
 .notification-icon-container:hover {
-    color: #e0e0e0; /* Slight dim on hover */
+    color: #e0e0e0; 
 }
 
 .bell-icon {
-    font-size: 1.5rem; /* Matches relative sizing to the profile pic */
+    font-size: 1.5rem; 
 }
 
-/* Red Notification Badge */
 .badge {
     position: absolute;
     top: -6px;
     right: -8px;
-    background-color: #ff3b30; /* Vibrant red */
+    background-color: #ff3b30; 
     color: #ffffff;
     font-size: 0.7rem;
     font-weight: bold;

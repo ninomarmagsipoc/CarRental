@@ -48,7 +48,6 @@ function Home() {
             } finally {
                 localStorage.removeItem("payMongoRef");
 
-                // auto hide after 3 seconds
                 setTimeout(() => {
                     setPaymentMessage("");
                     setPaymentStatus("");

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../adminCss/NotificationAdmin.css'; // Siguroha nga sakto ang path sa imong CSS
+import '../adminCss/NotificationAdmin.css';
 
 export default function NotificationAdmin() {
     const [notifications, setNotifications] = useState([]);

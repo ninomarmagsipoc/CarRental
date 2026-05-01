@@ -212,7 +212,6 @@ function Profile() {
         setFile(null);
     };
 
-    // Cancel Button Handlers (I-reset ang value if i-cancel)
     const handleCancelName = () => {
         setFirstName(origFirstName);
         setLastName(origLastName);
@@ -249,7 +248,6 @@ function Profile() {
                 )}
 
                 <div className="settings-content">
-                    {/* Left Column: Avatar */}
                     <div className="settings-sidebar">
                         <div className="settings-avatar-wrapper">
                             {preview ? (
@@ -274,13 +272,13 @@ function Profile() {
                         <input id="file-upload" type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} />
                     </div>
 
-                    {/* Right Column: Information & Forms */}
+                   
                     <div className="settings-form">
                         
-                        {/* PERSONAL INFORMATION SECTION */}
+                        
                         <div className="form-section-title" style={{ marginTop: 0 }}>Personal Information</div>
                         
-                        {/* Email Row (Always static) */}
+                       
                         <div className="info-display-row">
                             <div className="info-text">
                                 <label>Email Address</label>
@@ -288,7 +286,7 @@ function Profile() {
                             </div>
                         </div>
 
-                        {/* Name Row (Toggleable) */}
+                       
                         {!showNameForm ? (
                             <div className="info-display-row">
                                 <div className="info-text">
@@ -327,10 +325,10 @@ function Profile() {
                             </div>
                         )}
 
-                        {/* SECURITY SECTION */}
+                       
                         <div className="form-section-title">Security</div>
 
-                        {/* Password Row (Toggleable) */}
+                        
                         {!showPassForm ? (
                             <div className="info-display-row">
                                 <div className="info-text">
@@ -383,7 +381,7 @@ function Profile() {
                     </div>
                 </div>
 
-                {/* Bottom Actions Panel (Mogawas ra ni kung naay gi-edit nga wala gi cancel) */}
+               
                 {hasChanges && (
                     <div className="settings-actions">
                         {!isTextEdited && file && (

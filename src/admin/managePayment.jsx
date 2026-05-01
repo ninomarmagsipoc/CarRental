@@ -12,7 +12,7 @@ function ManagePayment() {
 
     // --- PAGINATION STATES ---
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5); // 10 items per page
+    const [itemsPerPage] = useState(5); 
 
     useEffect(() => {
         fetchAllPayments();
@@ -37,7 +37,6 @@ function ManagePayment() {
         }
     };
 
-    // --- Computed Stats ---
     const totalTransactions = payments.length;
 
     const totalCompleted = payments.filter(p => {
@@ -62,7 +61,6 @@ function ManagePayment() {
     const handleExportCSV = () => {
         let csvContent = "data:text/csv;charset=utf-8,";
 
-        // --- 1. REGULAR PAYMENTS ---
         csvContent += "--- REGULAR PAYMENTS ---\n";
         csvContent += "Payment ID,Customer,Rental ID,Total Amount,Status,Method,Date\n";
 
@@ -86,7 +84,6 @@ function ManagePayment() {
             csvContent += row + "\n";
         });
 
-        // --- 2. CANCELLATION CHARGES ---
         csvContent += "\n--- CANCELLATION CHARGES (25% Fee) ---\n";
         csvContent += "Payment ID,Customer,Rental ID,Charge Amount,Status,Method,Date\n";
 
@@ -122,7 +119,6 @@ function ManagePayment() {
     };
 
     const handlePrint = () => {
-        // 1. DATA FILTERING LOGIC (Wala hilabti ang imong original logic)
         const regularPayments = payments.filter(p => {
             const status = (p.paymentStatus || p.PaymentStatus || "").toLowerCase();
             return status !== 'rejected' && status !== 'failed' && status !== 'refunded';
@@ -134,13 +130,13 @@ function ManagePayment() {
             return status === 'refunded' && (reason.includes('cancel') || reason.includes('75%'));
         });
 
-        // 2. COMPUTATIONS
+        // COMPUTATIONS
         const totalReg = regularPayments.reduce((sum, p) => sum + (p.amount || p.Amount || 0), 0);
         const totalCan = cancelledPayments.reduce((sum, p) =>
             sum + ((p.amount || p.Amount || p.totalAmount || p.TotalAmount || 0) * 0.25), 0);
         const overallTotal = totalReg + totalCan;
 
-        // 3. GENERATE ROWS
+        // GENERATE ROWS
         const regularRows = regularPayments.map(p => {
             const paidAmount = p.amount || p.Amount || 0;
             const paymentType = (p.paymentType || p.PaymentType || "").toLowerCase();
@@ -300,7 +296,6 @@ function ManagePayment() {
             return;
         }
 
-        // --- DATA FILTERING (Logic retained) ---
         const monthlyPayments = payments.filter(p => {
             const date = new Date(p.createdAt || p.CreatedAt);
             const year = date.getFullYear();

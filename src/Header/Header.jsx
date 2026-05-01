@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import { useState, useEffect, useRef } from 'react';
-import { FaBell } from 'react-icons/fa'; // Added Bell Icon
+import { FaBell } from 'react-icons/fa';
 import '../Css/header.css';
 
 function Header({ isLoggedIn, setIsLogIn }) {

@@ -1,17 +1,15 @@
-/* Container holds everything */
 .admin-container {
     display: flex;
     height: 100vh;
     overflow: hidden;
     position: relative;
-    background-color: #f4f7f6; /* Example background */
+    background-color: #f4f7f6; 
 }
 
 .admin-logo-container{
   text-align: center;
 }
 
-/* Sidebar Styling - Hidden by default */
 .admin-sidebar {
     width: 250px;
     height: 100vh;
@@ -21,18 +19,16 @@
     top: 0;
     left: 0;
     z-index: 1000;
-    transform: translateX(-100%); /* Moves it off-screen to the left */
+    transform: translateX(-100%); 
     transition: transform 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
 }
 
-/* When the state is true, this class brings it back on screen */
 .admin-sidebar.open {
     transform: translateX(0);
 }
 
-/* Dark overlay behind the sidebar when it's open */
 .admin-overlay {
     position: fixed;
     top: 0;
@@ -43,7 +39,6 @@
     z-index: 999; /* Just below the sidebar */
 }
 
-/* Main Area - Takes full width now */
 .admin-main-area {
     flex: 1;
     display: flex;
@@ -85,7 +80,6 @@
     flex: 1;
 }
 
-/* Navigation Links (Keep your existing styles, just added a placeholder) */
 .admin-nav-menu {
     display: flex;
     flex-direction: column;

@@ -133,7 +133,7 @@ function Register() {
                     </button>
 
                     <p className="login-footer">
-                        Already have an account? <Link to="/login">Login</Link>
+                        Already have an account? <Link to="/login" className="register-link">Login</Link>
                     </p>
                 </div>
             </div>
