@@ -89,13 +89,12 @@ function Notification() {
     };
 
     const handlePayOnlineClick = async (e) => {
-        e.stopPropagation(); // Pugngan ang uban click events sa row
+        e.stopPropagation(); 
 
         console.log("Checking URL:", checkoutUrl);
         console.log("Checking Rental ID:", notif.rentalID);
 
         try {
-            // 1. Mangutana sa database kung bayad na ba ni
             const response = await fetch(`https://localhost:7263/api/rental/${notif.rentalID}`);
 
             if (!response.ok) {
@@ -108,14 +107,12 @@ function Notification() {
             const rawStatus = result.data?.status || result.data?.Status || "";
             const rentalStatus = rawStatus.toLowerCase();
 
-            // 2. Kung bayad na ('active', 'completed', 'returned'), PUGNGAN ang redirect!
             if (rentalStatus === 'active' || rentalStatus === 'completed' || rentalStatus === 'returned') {
 
-                return; // 🛑
+                return; 
 
             }
 
-            // 3. Kung pending pa (wala pa bayari), i-padayon ang redirect
             if (referenceId) {
                 localStorage.setItem("payMongoRef", referenceId);
             }
@@ -174,20 +171,20 @@ function Notification() {
                                                     const parts = notif.message.split("[PAY_ONLINE_LINK]");
                                                     const textPart = parts[0];
 
-                                                    // I-split ang URL ug Reference
+                                                   
                                                     const linkAndRef = parts[1].split("[REF]");
                                                     const checkoutUrl = linkAndRef[0];
                                                     const referenceId = linkAndRef[1];
 
                                                     const handlePayOnlineClick = async (e) => {
-                                                        e.stopPropagation(); // Pugngan ang uban click events sa row
+                                                        e.stopPropagation();
 
                                                         console.log("Checking URL:", checkoutUrl);
                                                         console.log("Checking REF:", referenceId);
                                                         console.log("Checking Rental ID:", notif.rentalID);
 
                                                         try {
-                                                            // 1. I-check sa API kung bayad na ba ni
+                                                            
                                                             const response = await fetch(`https://localhost:7263/api/rental/${notif.rentalID}`);
 
                                                             if (!response.ok) {
@@ -195,15 +192,15 @@ function Notification() {
                                                             }
 
                                                             const result = await response.json();
-                                                            console.log("API Response:", result); // I-print ang result sa console
+                                                            console.log("API Response:", result); 
 
-                                                            // Kuhaon ang status (gihimong lowercase tanan para walay sipyat)
+                                                           
                                                             const rawStatus = result.data?.status || result.data?.Status || "";
                                                             const rentalStatus = rawStatus.toLowerCase();
 
                                                             console.log("Rental Status detected:", rentalStatus);
 
-                                                            // 2. Kung bayad na ('active', 'completed', 'returned'), pugngan ang redirect!
+                                                           
                                                             if (rentalStatus === 'active' || rentalStatus === 'completed' || rentalStatus === 'returned') {
 
 
@@ -212,17 +209,17 @@ function Notification() {
                                                                     setTimeout(() => setToastMessage(""), 3000);
                                                                 }
 
-                                                                return; // 🛑 UNDANG DINHI, DILI MO-REDIRECT
+                                                                return; 
                                                             }
 
-                                                            // 3. Kung wala pa nabayran, i-save ang ref ug i-redirect padulong PayMongo
+                                                            
                                                             if (referenceId) {
                                                                 localStorage.setItem("payMongoRef", referenceId);
                                                             }
                                                             window.location.href = checkoutUrl;
 
                                                         } catch (err) {
-                                                            // 🛑 GIKUHA NAKO ANG AUTO-REDIRECT DINHI. I-ALERT NATO ANG ERROR!
+                                                            
                                                             console.error("Error during check:", err);
                                                             alert("Wala naka-connect sa Database para i-check ang status: " + err.message);
                                                         }

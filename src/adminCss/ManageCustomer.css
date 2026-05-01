@@ -1,332 +1,319 @@
 .manage-customers-container {
-    padding: 20px;
+    padding: 30px;
     background-color: #f8fafc;
+    font-family: 'Inter', Arial, sans-serif;
     min-height: 100vh;
 }
 
 .manage-customers-container h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
+    font-size: 26px;
+    font-weight: 800;
     color: #0f172a;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-/* --- SUMMARY CARDS DESIGN --- */
+.text-center { text-align: center; }
+.py-4 { padding-top: 20px; padding-bottom: 20px; }
+.font-bold { font-weight: 700; }
+
 .summary-cards {
     display: flex;
     gap: 20px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
 .stat-card {
     flex: 1;
-    padding: 20px;
-    border-radius: 12px;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    border-top: 4px solid #111;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
 }
 
 .stat-title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 10px;
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
 }
 
 .stat-number {
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
 }
 
-/* Colors para sa cards parehas sa imong picture */
-.stat-blue {
-    background-color: #f0f7ff;
-    border: 1px solid #dbeafe;
-    color: #1d4ed8;
-}
-
-.stat-green {
-    background-color: #f0fdf4;
-    border: 1px solid #dcfce7;
-    color: #15803d;
-}
-
-.stat-red {
-    background-color: #fef2f2;
-    border: 1px solid #fee2e2;
-    color: #b91c1c;
-}
-
-/* --- TABLE DESIGN --- */
 .table-wrapper {
     background: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
 }
 
 .customer-table {
     width: 100%;
     border-collapse: collapse;
-}
-
-.customer-table th,
-.customer-table td {
-    padding: 15px 10px;
-    border-bottom: 1px solid #f1f5f9;
     text-align: left;
-    color: #334155;
 }
 
 .customer-table th {
-    font-weight: bold;
-    color: #000;
+    background-color: #0f172a;
+    color: #ffffff;
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.customer-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.customer-table tr:hover {
+    background-color: #f8fafc;
 }
 
 .customer-profile {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
 }
 
 .profile-pic-small {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
 }
 
 .customer-name {
-    font-weight: 500;
+    font-weight: 700;
+    color: #0f172a;
 }
 
-/* --- VERIFIED & STATUS BADGES --- */
 .text-verified {
-    color: #10b981;
-    font-weight: 500;
+    color: #111;
+    font-weight: 700;
+    font-size: 13px;
 }
 
 .text-unverified {
     color: #94a3b8;
+    font-size: 13px;
 }
 
 .status-badge {
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .status-active {
-    background-color: #dcfce7;
-    color: #166534;
+    background-color: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
 }
 
 .status-blocked {
-    background-color: #fee2e2;
-    color: #991b1b;
+    background-color: #111;
+    color: #ffffff;
 }
 
-/* --- BUTTONS --- */
 .action-buttons {
     display: flex;
-    gap: 8px;
+    gap: 10px;
+    justify-content: center;
 }
 
-.btn-view,
-.btn-block,
-.btn-unblock {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 50%;
+.action-buttons button {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 12px;
     cursor: pointer;
-    color: white;
-    transition: transform 0.2s;
-}
-
-.btn-view:hover,
-.btn-block:hover,
-.btn-unblock:hover {
-    transform: scale(1.1);
-}
-
-.btn-view {
-    background-color: transparent;
-    color: #3b82f6;
-    font-size: 1.2rem;
-}
-
-.btn-block {
-    background-color: transparent;
-    color: #ef4444;
-    font-size: 1.1rem;
-}
-
-.btn-unblock {
-    background-color: transparent;
-    color: #22c55e;
-    font-size: 1.1rem;
-}
-
-/* Modal Overlay - Gihimong blur ug dark gamay */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    transition: all 0.2s ease;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.btn-view { color: #0f172a; }
+.btn-view:hover { background-color: #f1f5f9; border-color: #0f172a; }
+
+.btn-block { color: #0f172a; }
+.btn-block:hover { background-color: #111; color: #ffffff; border-color: #111; }
+
+.btn-unblock { color: #ffffff; background-color: #111; border-color: #111; }
+.btn-unblock:hover { background-color: #333; }
+
+.bw-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 1000;
-    backdrop-filter: blur(3px); /* Optional: Modern blur effect */
 }
 
-/* Modal Content Box */
-.modal-content {
+.bw-modal-content {
     background: #ffffff;
-    width: 450px;
-    max-width: 90%;
+    padding: 35px;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     position: relative;
-    overflow: hidden;
-    animation: modalFadeIn 0.3s ease; /* Smooth entrance */
+    border: 1px solid #e2e8f0;
 }
 
-@keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+.bw-modal-content h3 {
+    margin-top: 0;
+    color: #0f172a;
+    font-weight: 800;
+    margin-bottom: 10px;
 }
 
-/* KANI ANG CSS PARA SA X BUTTON */
 .close-btn {
     position: absolute;
     top: 15px;
-    right: 15px;
-    background: #f1f5f9;
-    color: #64748b;
+    right: 20px;
+    background: none;
     border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 24px;
-    line-height: 1;
+    font-size: 28px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    z-index: 10;
+    color: #64748b;
+    transition: 0.2s;
 }
 
-.close-btn:hover {
-    background: #ef4444; /* Mo-pula inig hover */
-    color: white;
-}
+.close-btn:hover { color: #0f172a; }
 
-/* Modal Header - Gi-usab para nindot pagka align ang picture ug pangalan */
-.modal-header {
-    padding: 25px 25px 20px 25px;
+.modal-actions-bw {
     display: flex;
-    align-items: center;
     gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.btn-bw-solid {
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.btn-bw-solid:hover { background: #333; }
+
+.btn-bw-outline {
+    background: transparent;
+    color: #111;
+    border: 1px solid #111;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.btn-bw-outline:hover { background: #f8fafc; }
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    padding-bottom: 25px;
     border-bottom: 1px solid #e2e8f0;
-    background: #f8fafc;
 }
 
 .modal-profile-pic {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #e2e8f0;
-    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 2px;
 }
 
 .modal-user-info h3 {
-    margin: 0 0 5px 0;
-    color: #1e293b;
-    font-size: 1.2rem;
+    margin: 0;
+    font-size: 22px;
+    color: #0f172a;
+    font-weight: 800;
 }
 
 .modal-email {
-    margin: 0 0 10px 0;
+    margin: 5px 0 0;
     color: #64748b;
-    font-size: 0.9rem;
-}
-
-/* Modal Body & History List */
-.modal-body {
-    padding: 20px 25px 25px 25px;
+    font-size: 14px;
 }
 
 .history-title {
-    margin: 0 0 15px 0;
-    color: #334155;
-    font-size: 1.05rem;
-    font-weight: 600;
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
 }
 
 .history-list {
-    max-height: 300px;
+    max-height: 250px;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding-right: 5px; /* Space para sa scrollbar */
+    padding-right: 10px;
 }
 
-/* Custom Scrollbar - Para nipis ug nindot tan-awon */
-.history-list::-webkit-scrollbar {
-    width: 6px;
-}
-.history-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-.history-list::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-}
-
-/* History Cards */
 .history-card {
-    background: #ffffff;
     border: 1px solid #e2e8f0;
     padding: 15px;
     border-radius: 8px;
-    border-left: 4px solid #1e293b; /* Dark nga linya sa kilid (dili ra kaayo baga) */
-    transition: transform 0.2s;
-}
-
-.history-card:hover {
-    transform: translateX(3px); /* Mo-move gamay inig hover */
+    margin-bottom: 12px;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .history-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     margin-bottom: 8px;
-}
-
-.car-name {
-    font-weight: 600;
-    color: #1e293b;
-}
-
-.car-price {
-    font-weight: bold;
-    color: #10b981; /* Green color sa presyo */
+    font-weight: 800;
+    color: #0f172a;
 }
 
 .history-card-dates {
-    font-size: 0.85rem;
+    font-size: 13px;
     color: #64748b;
 }
 
@@ -334,5 +321,5 @@
     text-align: center;
     color: #94a3b8;
     font-style: italic;
-    padding: 20px 0;
+    padding: 20px;
 }

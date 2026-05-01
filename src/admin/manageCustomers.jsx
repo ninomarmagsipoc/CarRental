@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaEye, FaBan, FaUnlock } from 'react-icons/fa';
 import '../adminCss/ManageCustomer.css';
+import { toast } from 'react-toastify'; 
 
 function ManageCustomers() {
     const [customers, setCustomers] = useState([]);
@@ -21,7 +22,6 @@ function ManageCustomers() {
     const fetchCustomers = async () => {
         setLoading(true);
         try {
-            // Siguroha nga sakto ni nga API link
             const response = await fetch('https://localhost:7263/api/auth/customers');
             const result = await response.json();
             setCustomers(result.data || []);
@@ -51,17 +51,16 @@ function ManageCustomers() {
                     );
 
                     if (response.ok) {
-                        toast.success(currentStatus ? "User unblocked!" : "User blocked!");
+                        alert(currentStatus ? "User unblocked!" : "User blocked!");
                         fetchCustomers();
                     } else {
-                        toast.error("Failed to update user status.");
+                        alert("Failed to update user status.");
                     }
                 } catch (error) {
                     console.error("Error updating user status", error);
-                    toast.error("Something went wrong.");
+                    alert("Something went wrong.");
                 }
 
-                // close modal
                 setConfirmModal({ show: false, message: "", onConfirm: null });
             }
         });
@@ -87,46 +86,39 @@ function ManageCustomers() {
         <div className="manage-customers-container">
             {confirmModal.show && (
                 <div className="bw-modal-overlay">
-                    <div className="bw-modal-content" style={{ textAlign: 'center' }}>
+                    <div className="bw-modal-content text-center">
                         <h3>CONFIRM ACTION</h3>
                         <p>{confirmModal.message}</p>
 
                         <div className="modal-actions-bw">
-                            <button
-                                className="btn-bw-solid"
-                                onClick={confirmModal.onConfirm}
-                            >
+                            <button className="btn-bw-solid" onClick={confirmModal.onConfirm}>
                                 YES
                             </button>
-
-                            <button
-                                className="btn-bw-outline"
-                                onClick={() => setConfirmModal({ show: false })}
-                            >
+                            <button className="btn-bw-outline" onClick={() => setConfirmModal({ show: false })}>
                                 CANCEL
                             </button>
                         </div>
                     </div>
                 </div>
             )}
+
             <h2>User Management</h2>
 
             <div className="summary-cards">
-                <div className="stat-card stat-blue">
+                <div className="stat-card">
                     <span className="stat-title">Total Users</span>
                     <span className="stat-number">{totalUsers}</span>
                 </div>
-                <div className="stat-card stat-green">
+                <div className="stat-card">
                     <span className="stat-title">Verified Users</span>
                     <span className="stat-number">{verifiedUsers}</span>
                 </div>
-                <div className="stat-card stat-red">
+                <div className="stat-card">
                     <span className="stat-title">Blocked Users</span>
                     <span className="stat-number">{blockedUsers}</span>
                 </div>
             </div>
 
-            {/* TABLE */}
             <div className="table-wrapper">
                 <table className="customer-table">
                     <thead>
@@ -135,15 +127,15 @@ function ManageCustomers() {
                             <th>Email</th>
                             <th>Verified</th>
                             <th>Status</th>
-                            <th>Total Rentals</th>
-                            <th>Actions</th>
+                            <th className="text-center">Total Rentals</th>
+                            <th className="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {loading ? (
-                            <tr><td colSpan="6" className="text-center">Loading customers...</td></tr>
+                            <tr><td colSpan="6" className="text-center py-4">Loading customers...</td></tr>
                         ) : customers.length === 0 ? (
-                            <tr><td colSpan="6" className="text-center">No customers found.</td></tr>
+                            <tr><td colSpan="6" className="text-center py-4">No customers found.</td></tr>
                         ) : (
                             customers.map((user) => (
                                 <tr key={user.id}>
@@ -154,7 +146,7 @@ function ManageCustomers() {
                                                 alt="Profile"
                                                 className="profile-pic-small"
                                                 onError={(e) => {
-                                                    e.target.onerror = null; // KANI ANG MOPUGONG SA BLINK-BLINK
+                                                    e.target.onerror = null; 
                                                     e.target.src = `https://ui-avatars.com/api/?name=${user.firstName}+${user.lastName}&background=e2e8f0&color=334155`;
                                                 }}
                                             />
@@ -163,7 +155,6 @@ function ManageCustomers() {
                                     </td>
                                     <td>{user.email}</td>
                                     <td>
-                                        {/* VERIFIED COLUMN */}
                                         {user.isVerified ? (
                                             <span className="text-verified">✓ Verified</span>
                                         ) : (
@@ -200,9 +191,10 @@ function ManageCustomers() {
             </div>
 
             {showModal && selectedCustomer && (
-                <div className="modal-overlay" onClick={() => setShowModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="bw-modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="bw-modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="close-btn" onClick={() => setShowModal(false)} title="Close">&times;</button>
+                        
                         <div className="modal-header">
                             <img
                                 src={selectedCustomer.profileImage ? `https://localhost:7263${selectedCustomer.profileImage}` : "/default-user.png"}
@@ -215,6 +207,7 @@ function ManageCustomers() {
                                 <p className="modal-email">{selectedCustomer.email}</p>
                             </div>
                         </div>
+
                         <div className="modal-body">
                             <h4 className="history-title">Successful Rental History</h4>
                             <div className="history-list">

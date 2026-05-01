@@ -59,7 +59,7 @@ function Favorite({ isLoggedIn }) {
 
     return (
         <div className="car-container">
-            <h1 className="title">❤️ My Favorites</h1>
+            <h1 className="title">My Favorites</h1>
 
             <div className="car-grid">
                 {favorites.length > 0 ? (

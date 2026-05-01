@@ -1,15 +1,13 @@
-/* About.css */
 .about-page-wrapper {
     max-width: 100%;
     margin: 0 auto;
     font-family: 'Inter', sans-serif;
     color: #000;
-    min-height: 85vh; /* Fix para dili mosaka ang footer */
+    min-height: 85vh; 
     background-color: #fff;
     padding-bottom: 50px;
 }
 
-/* Hero Section */
 .about-hero {
     background-color: #000;
     color: #fff;
@@ -32,7 +30,6 @@
     margin-top: 10px;
 }
 
-/* Content Container */
 .about-content-container {
     max-width: 1100px;
     margin: 0 auto;
@@ -64,7 +61,6 @@
     margin: 60px 0;
 }
 
-/* Grid Layout */
 .about-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -93,7 +89,6 @@
     font-size: 1rem;
 }
 
-/* Why Choose Us Section */
 .about-why-us {
     text-align: left;
 }
@@ -116,7 +111,6 @@
     position: relative;
 }
 
-/* Bullet point as a black box */
 .why-us-list li::before {
     content: "";
     position: absolute;

@@ -13,12 +13,11 @@
   width: 100%;
 }
 
-/* --- SLIDER CONTAINER --- */
 .slider-container {
     width: 100%;
     padding: 10px 20px;
-    background-color: #000000; /* Light gray background to make white cards pop */
-    overflow: hidden; /* Hides the cars outside the screen */
+    background-color: #000000; 
+    overflow: hidden;
 }
 
 .slider-header {
@@ -37,7 +36,6 @@
     font-size: 1.1rem;
 }
 
-/* --- ANIMATION TRACK --- */
 .slider-viewport {
     position: relative;
     width: 100%;
@@ -46,13 +44,11 @@
 
 .slider-track {
     display: flex;
-    gap: 24px; /* Space between cards */
-    width: max-content; /* Allows track to grow based on content */
-    /* Animate from 0 to exactly half the track width (the duplicated part) */
+    gap: 24px; 
+    width: max-content; 
     animation: scrollSlider 30s linear infinite; 
 }
 
-/* Pause the animation when the user hovers over the cars */
 .slider-track:hover {
     animation-play-state: paused;
 }
@@ -62,9 +58,8 @@
     100% { transform: translateX(-50%); } 
 }
 
-/* --- CAR CARD --- */
 .car-card {
-    width: 320px; /* Fixed width for consistency */
+    width: 320px; 
     background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -75,22 +70,21 @@
 }
 
 .car-card:hover {
-    transform: translateY(-8px); /* Lifts the card up slightly */
+    transform: translateY(-8px); 
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* --- IMAGE SECTION --- */
 .car-image-wrapper {
     position: relative;
     width: 100%;
-    height: 200px; /* Fixed height so all cards are perfectly aligned */
+    height: 200px; 
     background-color: #eee;
 }
 
 .car-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Prevents stretching, crops nicely */
+    object-fit: cover; 
 }
 
 .car-badge {
@@ -106,12 +100,11 @@
     text-transform: uppercase;
 }
 
-/* --- TEXT CONTENT --- */
 .car-content {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Pushes the footer to the bottom */
+    flex-grow: 1; 
 }
 
 .car-title-row h3 {
@@ -125,7 +118,6 @@
     font-size: 0.9rem;
     line-height: 1.4;
     margin: 10px 0 15px;
-    /* Optional: Truncate long descriptions to 2 lines */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -141,12 +133,11 @@
     font-weight: 500;
 }
 
-/* --- FOOTER (Price & Button) --- */
 .car-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto; /* Forces footer to the very bottom of the card */
+    margin-top: auto; 
     padding-top: 15px;
     border-top: 1px solid #f0f0f0;
 }
@@ -169,7 +160,7 @@
 }
 
 .view-more-btn {
-    background-color: #1a1a1a; /* Sleek black button */
+    background-color: #1a1a1a;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -181,24 +172,20 @@
 }
 
 .view-more-btn:hover {
-    background-color: #007bff; /* Turns blue on hover */
+    background-color: #007bff;
 }
 
 .view-more-btn:active {
-    transform: scale(0.95); /* Slight click effect */
+    transform: scale(0.95); 
 }
 
 .container {
   margin: 0;
   padding-top: 10px;
   display: flex;
-  /* flex layout */
   flex-direction: column;
-  /* row (horizontal) */
   align-items: center;
-  /* vertical alignment */
   justify-content: center;
-  /* horizontal alignment of all items */
   gap: 10px;
 }
 
@@ -221,7 +208,6 @@
   color: white;
   cursor: pointer;
 
-  /* center text inside button */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -233,7 +219,6 @@
   transform: scale(1.05);
 }
 
-/* Search Bar */
 .search-bar {
   display: flex;
   align-items: center;
@@ -283,9 +268,8 @@
   text-align: center;
 }
 
-/* Creators Section Styles */
 .creators-section {
-    background-color: #000; /* Black background para premium */
+    background-color: #000; 
     color: #fff;
     padding: 80px 20px;
     text-align: center;
@@ -312,7 +296,7 @@
 }
 
 .creator-card {
-    background: #111; /* Dark gray for subtle contrast */
+    background: #111; 
     border: 1px solid #333;
     padding: 30px;
     border-radius: 4px;
@@ -352,7 +336,6 @@
     margin-bottom: 25px;
 }
 
-/* Facebook Button Style */
 .fb-link-btn {
     display: inline-flex;
     align-items: center;
@@ -402,7 +385,6 @@
     animation: fadeInScale 0.3s ease;
 }
 
-/* status styles */
 .floating-alert.success {
     background: #28a745;
 }
@@ -415,7 +397,6 @@
     background: #007bff;
 }
 
-/* animation */
 @keyframes fadeInScale {
     from {
         opacity: 0;
@@ -427,7 +408,6 @@
     }
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
     .creators-header h2 {
         font-size: 1.8rem;

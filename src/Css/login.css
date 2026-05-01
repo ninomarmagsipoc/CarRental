@@ -1,4 +1,3 @@
-/* Overlay background */
 .login-overlay {
     position: fixed;
     top: 0;
@@ -14,7 +13,6 @@
     align-items: center;
 }
 
-/* Card */
 .login-card {
     position: relative;
     width: 320px;
@@ -31,7 +29,6 @@
     animation: pop 0.3s ease;
 }
 
-/* Title */
 .login-title {
     margin-bottom: 5px;
 }
@@ -43,7 +40,6 @@
     margin-bottom: 20px;
 }
 
-/* Inputs */
 .login-input {
     width: 100%;
     padding: 10px;
@@ -57,7 +53,6 @@
     color: white;
 }
 
-/* Button */
 .login-btn {
     margin: 5px;
     width: 100%;
@@ -77,14 +72,12 @@
     background: #0097a7;
 }
 
-/* Footer */
 .login-footer {
     margin-top: 15px;
     font-size: 14px;
     color: white;
 }
 
-/* Close button */
 .close-btn {
     position: absolute;
     top: 10px;
@@ -95,4 +88,24 @@
     color: white;
     font-size: 18px;
     cursor: pointer;
+}
+
+.login-btn a {
+  color: inherit; 
+  text-decoration: none; 
+  display: block;
+  width: 100%;
+}
+
+.login-btn a:hover {
+  text-decoration: none; 
+}
+
+.mt-3 {
+  margin-top: 5px;
+}
+
+.register-link {
+   text-decoration: none;
+   color: rgb(179, 113, 113);
 }

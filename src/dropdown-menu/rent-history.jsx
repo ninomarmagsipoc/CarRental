@@ -6,7 +6,6 @@ function MyRentalHistory() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // --- PAGINATION STATES ---
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5); 
 
@@ -20,7 +19,7 @@ function MyRentalHistory() {
     const [receiptData, setReceiptData] = useState(null);
     const [toast, setToast] = useState({ show: false, message: '', type: '', actionId: null });
 
-    // Function para mapakita ang floating alert
+
     const showFloatingAlert = (msg, type = 'success', actionId = null) => {
         setToast({ show: true, message: msg, type: type, actionId: actionId });
 
@@ -110,7 +109,7 @@ function MyRentalHistory() {
         try {
             const storedUser = JSON.parse(localStorage.getItem("user"));
             userId = storedUser?.id || storedUser?.Id || 1;
-        } catch (e) { /* ignore */ }
+        } catch (e) { }
 
         fetchUserHistory(userId);
         setCurrentPage(1); 
@@ -122,7 +121,7 @@ function MyRentalHistory() {
             try {
                 const storedUser = JSON.parse(localStorage.getItem("user"));
                 userId = storedUser?.id || 1;
-            } catch { /* ignore */ }
+            } catch { }
 
             const response = await fetch(`https://localhost:7263/api/rental/${rentalId}/request-cancel`, {
                 method: 'POST',
@@ -202,7 +201,6 @@ function MyRentalHistory() {
         }
     };
 
-    // Step A: Tawagon inig click sa Trash Icon
     const confirmTrash = (rentalId) => {
         if (!rentalId) {
             console.error("No Rental ID found to trash!");
@@ -211,19 +209,18 @@ function MyRentalHistory() {
         showFloatingAlert("Are you sure you want to move this to trash?", "confirm", rentalId);
     };
 
-    // Step B: Ang tinuod nga API call inig click sa "Yes" sa Floating Alert
     const executeTrash = async (rentalId) => {
         try {
             console.log("Trashing ID:", rentalId);
             const response = await fetch(`https://localhost:7263/api/rental/trash/${rentalId}`, {
-                method: 'DELETE', // MAKE SURE SA IMONG C# BACKEND NGA NAKA [HttpDelete("trash/{id}")] NI! Pwede sad PUT depende unsa imong gibutang
+                method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem("token")}` }
             });
 
             if (response.ok) {
-                setToast({ show: false }); // I-hide ang confirm box
+                setToast({ show: false }); 
                 showFloatingAlert("Rental moved to trash!", "success");
-                handleManualRefresh(); // I-refresh aron mawala diritso sa list
+                handleManualRefresh();
             } else {
                 showFloatingAlert("Failed to move to trash.", "error");
             }
@@ -235,19 +232,16 @@ function MyRentalHistory() {
     if (loading) return <div className="history-container" style={{ textAlign: 'center' }}><h3>Loading your rent history...</h3></div>;
     if (error) return <div className="history-container" style={{ textAlign: 'center', color: 'red' }}><h3>Error: {error}</h3></div>;
 
-    // 🟢 Bulletproof Filter Logic (Mas sigurado nga matago ang gitrash)
     const safeHistory = Array.isArray(history) 
         ? history.filter(r => {
             const isDel = r.isDeleted === true || r.IsDeleted === true || r.isDeleted === 1;
             const isArch = r.isArchived === true || r.IsArchived === true || r.isArchived === 1;
             const isHidden = r.isPermanentlyHidden === true || r.IsPermanentlyHidden === true || r.isPermanentlyHidden === 1;
             
-            // I-return lang (ipakita) ang WALA gi-delete, WALA gi-archive, ug WALA gi-hide
             return !isDel && !isArch && !isHidden;
         }) 
         : [];
 
-    // --- PAGINATION LOGIC ---
     const totalPages = Math.ceil(safeHistory.length / itemsPerPage);
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -259,7 +253,6 @@ function MyRentalHistory() {
     return (
         <div className="history-container">
 
-            {/* CANCELLATION MODAL */}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -282,7 +275,7 @@ function MyRentalHistory() {
             {showReturnModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <div style={{ fontSize: '40px', marginBottom: '10px' }}>🚗</div>
+                        <div style={{ fontSize: '40px', marginBottom: '10px' }}></div>
                         <h3>Return Car?</h3>
                         <p>Are you sure you want to request a return for this car now?</p>
 
@@ -331,7 +324,7 @@ function MyRentalHistory() {
                                 const rId = booking?.rentalID || booking?.rentalId;
                                 const status = booking?.status || 'Unknown';
 
-                                // Define CSS class for status text
+                               
                                 let statusClass = "status-badge ";
                                 if (['Pending Review', 'Cancellation Requested'].includes(status)) statusClass += "status-pending";
                                 else if (['Approved', 'Confirmed', 'Returned', 'Delivered'].includes(status)) statusClass += "status-approved";
@@ -413,14 +406,13 @@ function MyRentalHistory() {
                                                 </div>
                                             )}
 
-                                            {/* 🟢 GI-AYO NGA PART: Gihimo nakong 'confirmTrash(rId)' aron naay sulod ang ID */}
                                             {['Completed', 'Cancelled', 'Rejected', 'Returned'].includes(booking.status) && (
                                                 <div>
                                                     <button
                                                         className="btn-cancel"
                                                         onClick={(e) => {
                                                             e.stopPropagation(); 
-                                                            confirmTrash(rId); // FIXED HERE
+                                                            confirmTrash(rId); 
                                                         }}
                                                         title="Move to Trash"
                                                     >
@@ -437,7 +429,6 @@ function MyRentalHistory() {
                 </table>
             </div>
 
-            {/* PAGINATION CONTROLS */}
             {totalPages > 1 && (
                 <div className="pagination-container">
                     <button
@@ -462,7 +453,6 @@ function MyRentalHistory() {
                 </div>
             )}
 
-            {/* 🧾 RECEIPT MODAL */}
             {showReceipt && receiptData && (
                 <div className="receipt-modal-overlay" onClick={handleCloseReceipt}>
                     <div className="receipt-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -505,7 +495,6 @@ function MyRentalHistory() {
                 </div>
             )}
 
-            {/* FLOATING TOAST / CONFIRMATION */}
             {toast.show && (
                 <div className={`floating-toast ${toast.type}`}>
                     <div className="toast-content">

@@ -10,7 +10,7 @@ function ManageBooking() {
 
     // --- PAGINATION STATES ---
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5); // 5 items per page
+    const [itemsPerPage] = useState(5); 
 
     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -20,7 +20,7 @@ function ManageBooking() {
     const [toast, setToast] = useState({
         show: false,
         message: "",
-        type: "success" // success | error | warning
+        type: "success"
     });
 
     const [confirmModal, setConfirmModal] = useState({
@@ -95,7 +95,7 @@ function ManageBooking() {
 
         setTimeout(() => {
             setToast({ show: false, message: "", type: "success" });
-        }, 3000); // mawala after 3 seconds
+        }, 3000); 
     };
 
     const handleViewDetails = (booking) => {
@@ -226,7 +226,6 @@ function ManageBooking() {
                 }
             };
 
-            // ✅ REPLACE PROMPT WITH INPUT MODAL
             if (action === "Rejected") {
                 showInputModal(
                     "Reject Booking Reason",
@@ -266,20 +265,18 @@ function ManageBooking() {
             const customer = (b.fullName || b.customerName || "").toLowerCase();
             const rentalId = (b.rentalID || b.rentalId || "").toString();
             const carId = (b.carID || b.carId || "").toString();
-            const status = b.status || b.Status || ""; // Kuhaon ang status sa booking
+            const status = b.status || b.Status || ""; 
             const searchLower = searchTerm.toLowerCase();
 
-            // 1. I-check ang Status Filter
             const matchesStatus = statusFilter === "All" || status === statusFilter;
 
-            // 2. I-check ang Search Term
             const matchesSearch = customer.includes(searchLower) ||
                 rentalId.includes(searchLower) ||
                 carId.includes(searchLower);
 
             return matchesStatus && matchesSearch;
         });
-    }, [bookings, searchTerm, statusFilter]); // Ayaw kalimti i-add ang statusFilter sa dependencies
+    }, [bookings, searchTerm, statusFilter]);
 
     // --- PAGINATION LOGIC ---
     const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
@@ -455,7 +452,6 @@ function ManageBooking() {
                     }
                 };
 
-                // ✅ REPLACE PROMPT WITH INPUT MODAL
                 if (action === "Rejected") {
                     showInputModal(
                         "Reject Return Reason",
@@ -648,8 +644,8 @@ function ManageBooking() {
             {toast.show && (
                 <div style={{
                     position: 'fixed',
-                    top: '24px',    // Adds space from the top edge
-                    right: '24px',  // Adds space from the right edge
+                    top: '24px',    
+                    right: '24px',  
                     backgroundColor:
                         toast.type === 'success' ? '#16a34a' :
                             toast.type === 'error' ? '#dc2626' :
@@ -703,7 +699,6 @@ function ManageBooking() {
 
             {/* Controls Bar */}
             <div className="filter-container" style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                {/* Search Input existing nimo */}
                 <input
                     type="text"
                     placeholder="Search customer, ID..."
@@ -712,7 +707,6 @@ function ManageBooking() {
                     className="search-input"
                 />
 
-                {/* BAG-O: Status Filter Dropdown */}
                 <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
@@ -847,7 +841,7 @@ function ManageBooking() {
 
                                                 {booking.status === 'Cancellation Requested' && (
                                                     <div className="btn-group">
-                                                        <button onClick={() => handleCancelReview(rId, 'Approved')} className="btn-action-sm btn-amber-solid" title="Approve cancellation and process 90% refund">
+                                                        <button onClick={() => handleCancelReview(rId, 'Approved')} className="btn-action-sm btn-amber-solid" title="Approve cancellation and process 75% refund">
                                                             Approve Cancel
                                                         </button>
                                                         <button onClick={() => handleCancelReview(rId, 'Rejected')} className="btn-action-sm btn-gray-light" title="Reject cancellation and keep booking confirmed">
@@ -907,17 +901,14 @@ function ManageBooking() {
                 </div>
             )}
 
-            {/* ✅ VIEW DETAILS MODAL */}
             {showModal && selectedBooking && (
                 <div className="paper-overlay">
                     <div className="paper-document">
 
-                        {/* 📜 WATERMARK / STAMP EFFECT */}
                         <div className={`doc-stamp stamp-${(selectedBooking.status || '').replace(/\s+/g, '-').toLowerCase()}`}>
                             {selectedBooking.status}
                         </div>
 
-                        {/* 🏢 DOCUMENT HEADER */}
                         <div className="paper-header">
                             <div className="company-branding">
                                 <h2 className="company-title">JKLM CAR RENTAL</h2>
@@ -931,7 +922,6 @@ function ManageBooking() {
 
                         <div className="paper-divider"></div>
 
-                        {/* 📋 DOCUMENT BODY (FORM-STYLE) */}
                         <div className="paper-body">
                             <div className="info-block">
                                 <h3>I. Customer Details</h3>
@@ -962,7 +952,6 @@ function ManageBooking() {
                             </div>
                         </div>
 
-                        {/* 🪪 ATTACHMENT SECTION */}
                         <div className="paper-attachment">
                             <h3>III. Attached Driver's License</h3>
                             <div className="license-frame">
@@ -981,7 +970,6 @@ function ManageBooking() {
                             </div>
                         </div>
 
-                        {/* ✒️ FOOTER & SIGNATURE AREA */}
                         <div className="paper-footer">
                             <div className="signature-area">
                                 <div className="sign-line"></div>

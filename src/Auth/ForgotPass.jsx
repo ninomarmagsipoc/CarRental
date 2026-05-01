@@ -84,7 +84,8 @@ function ForgotReset() {
     <div className="body1">
       <div className="login-overlay">
         <div className="login-card">
-          <h1>Forgot / Reset Password</h1>
+          <h2>Forgot Password</h2>
+          <br />
 
           {message && <p style={{ color: "red" }}>{message}</p>}
 

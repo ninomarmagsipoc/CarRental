@@ -9,14 +9,13 @@ function ReportAnalytics() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // STATES PARA SA MGA CHARTS (Gi-add ang activeRentals ug totalCars)
     const [stats, setStats] = useState({
         totalIncome: 0,
         activeUsers: 0,
         totalRentals: 0,
         carsRentedToday: 0,
-        activeRentals: 0, // BAG-O
-        totalCars: 0      // BAG-O
+        activeRentals: 0, 
+        totalCars: 0      
     });
 
     const [monthlyRevenueData, setMonthlyRevenueData] = useState([]);
@@ -38,14 +37,13 @@ function ReportAnalytics() {
             const result = await response.json();
             
             if (result.statusCode === 200 && result.data) {
-                // I-save ang data gikan sa database ngadto sa React states
                 setStats({
                     totalIncome: result.data.totalIncome || 0,
                     activeUsers: result.data.activeUsers || 0,
                     totalRentals: result.data.totalRentals || 0,
                     carsRentedToday: result.data.carsRentedToday || 0,
-                    activeRentals: result.data.activeRentals || 0, // BAG-O
-                    totalCars: result.data.totalCars || 0          // BAG-O
+                    activeRentals: result.data.activeRentals || 0, 
+                    totalCars: result.data.totalCars || 0          
                 });
                 setMonthlyRevenueData(result.data.monthlyRevenue || []);
                 setDailyRevenueData(result.data.dailyRevenue || []);
@@ -94,12 +92,10 @@ function ReportAnalytics() {
                     <h4>Cars Rented Today</h4>
                     <p className="text-orange">{stats.carsRentedToday}</p>
                 </div>
-                {/* 🟢 GI-ADD: Active Rentals Box */}
                 <div className="stat-box">
                     <h4>Active Rentals</h4>
                     <p className="text-teal" style={{ color: '#14b8a6' }}>{stats.activeRentals}</p>
                 </div>
-                {/* 🟢 GI-ADD: Total Cars Box */}
                 <div className="stat-box">
                     <h4>Total Cars</h4>
                     <p className="text-indigo" style={{ color: '#6366f1' }}>{stats.totalCars}</p>

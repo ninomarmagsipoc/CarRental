@@ -9,11 +9,9 @@ function ManageCars() {
     const [cars, setCars] = useState([]);
     const [bookings, setBookings] = useState([]);
 
-    // States para sa Calendar Modal
     const [showCalendar, setShowCalendar] = useState(false);
     const [selectedCarName, setSelectedCarName] = useState("");
 
-    // States para sa Edit Modal
     const [showEditModal, setShowEditModal] = useState(false);
     const [editCarData, setEditCarData] = useState({
         carId: '', carName: '', carInfo: '', seats: '', pricePerDay: '', maintenanceMonth: '', imageFile: null
@@ -43,10 +41,8 @@ function ManageCars() {
         fetchCars();
     }, []);
 
-    // FETCH ALL CARS
     const fetchCars = async () => {
         try {
-            // Kung true ang isArchiveView, mokuha siya sa '/archived', kung false sa normal '/cars'
             const url = isArchiveView
                 ? 'https://localhost:7263/api/archived'
                 : 'https://localhost:7263/api/cars';
@@ -191,10 +187,8 @@ function ManageCars() {
                 const errorResult = await res.json();
                 console.log("Full Error Result:", errorResult);
 
-                // Kuhaon nato ang specific nga errors kung naa
                 let detailedErrors = "";
                 if (errorResult.errors) {
-                    // I-convert ang error dictionary ngadto sa text para mabasa nato
                     detailedErrors = "\\nDetails: " + JSON.stringify(errorResult.errors);
                 }
 
@@ -208,7 +202,6 @@ function ManageCars() {
         }
     };
 
-    // CALENDAR FUNCTIONS
     const openCalendar = async (car) => {
         setSelectedCarName(car.carName);
         try {

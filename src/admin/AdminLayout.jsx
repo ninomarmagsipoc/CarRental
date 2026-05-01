@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, Outlet, useNavigate, Navigate } from "react-router-dom";
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
-import { FaBell } from 'react-icons/fa'; // 🟢 Import ang Bell Icon
+import { FaBell } from 'react-icons/fa'; 
 import "../adminCss/AdminDashboard.css";
 
 export default function AdminLayout({ setIsLogIn }) {
@@ -9,23 +9,20 @@ export default function AdminLayout({ setIsLogIn }) {
     
     // States
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0); // 🟢 State para sa red badge
+    const [unreadCount, setUnreadCount] = useState(0); 
 
     const isAdmin = localStorage.getItem("admin");
 
   useEffect(() => {
         let connection = null;
 
-        // 🟢 1. I-fetch ang data inig load sa page parehas sa User
         const fetchUnreadCount = async () => {
             try {
-                // Kay admin man ni, kasagaran 1 ang iyang ID sa database.
-                // Kung lahi ang ID sa imong admin account, ilisi ang '1' ngadto sa saktong ID.
                 const adminId = 1; 
                 const response = await fetch(`https://localhost:7263/api/notification/unread-count/${adminId}`);
                 if (response.ok) {
                     const count = await response.json();
-                    setUnreadCount(count); // I-set dritso ang number gikan sa database
+                    setUnreadCount(count); 
                 }
             } catch (error) {
                 console.error("Failed to fetch admin notification count:", error);
@@ -33,17 +30,14 @@ export default function AdminLayout({ setIsLogIn }) {
         };
 
         const setupNotifications = async () => {
-            // 🟢 Tawagon nato ang fetch para mo-gawas ang count inig refresh
             await fetchUnreadCount();
 
-            // 🟢 2. I-setup ang SignalR para sa mga umaabot nga notifications (live)
             connection = new HubConnectionBuilder()
                 .withUrl("https://localhost:7263/notificationHub")
                 .withAutomaticReconnect()
                 .configureLogging(LogLevel.None) 
                 .build();
 
-            // 🟢 Bantayi nga ang signal name kay "ReceiveAdminNotification"
             connection.on("ReceiveAdminNotification", (newCount) => {
                 console.log("New Admin Notification Count: ", newCount);
                 setUnreadCount(newCount); 
@@ -63,13 +57,12 @@ export default function AdminLayout({ setIsLogIn }) {
 
         setupNotifications();
 
-        // 🟢 Cleanup inig gawas nimo sa admin panel
         return () => {
             if (connection) {
                 connection.stop();
             }
         };
-    }, []); // <-- Empty array pasabot mo-run lang kausa inig load
+    }, []); 
 
     if (!isAdmin) {
         return <Navigate to="/" replace />;
@@ -84,7 +77,6 @@ export default function AdminLayout({ setIsLogIn }) {
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
     const closeSidebar = () => setIsSidebarOpen(false);
 
-    // 🟢 I-reset ang badge inig click sa bell padulong sa notifications page
     const handleBellClick = () => {
         setUnreadCount(0); 
     };
@@ -125,7 +117,6 @@ export default function AdminLayout({ setIsLogIn }) {
                         <h2 style={{ margin: 0 }}>Admin Panel</h2>
                     </div>
 
-                    {/* 🟢 RIGHT SIDE: Notification Bell (Parihas gyud sa User Header) */}
                     <div className="header-right">
                         <Link 
                             to="/admin/notifications" 
@@ -134,7 +125,6 @@ export default function AdminLayout({ setIsLogIn }) {
                         >
                             <FaBell />
                             
-                            {/* Mo-gawas ra ang pula nga badge kung naay unread (greater than 0) */}
                             {unreadCount > 0 && (
                                 <span style={{
                                     position: 'absolute', 
